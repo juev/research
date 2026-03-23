@@ -1,0 +1,51 @@
+site_name: Research
+site_description: Коллекция аналитических обзоров по инструментам и технологиям
+site_url: https://juev.github.io/research/
+
+repo_url: https://github.com/juev/research
+repo_name: juev/research
+
+theme:
+  name: material
+  language: ru
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Тёмная тема
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Светлая тема
+  features:
+    - navigation.instant
+    - navigation.top
+    - search.highlight
+    - content.code.copy
+
+plugins:
+  - search:
+      lang: ru
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+
+nav:
+  - Главная: index.md
+  - Статьи:
+      - Сравнение ИИ моделей: ai-models-comparison-2026.md
+      - Cursor IDE как LLM-proxy: cursor-llm-proxy.md
+      - Утилита LLM: llm-cli-tool.md
+      - SSH clipboard forwarding: ssh-clipboard-forwarding.md

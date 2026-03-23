@@ -1,6 +1,6 @@
 site_name: Research
 site_description: Коллекция аналитических обзоров по инструментам и технологиям
-site_url: https://juev.github.io/research/
+site_url: https://research.evsyukov.org/
 
 repo_url: https://github.com/juev/research
 repo_name: juev/research
@@ -40,6 +40,7 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true
+  - footnotes
   - tables
 
 nav:

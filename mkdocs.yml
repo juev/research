@@ -31,6 +31,7 @@ plugins:
   - search:
       lang: ru
   - awesome-nav
+  - macros
 
 markdown_extensions:
   - toc:

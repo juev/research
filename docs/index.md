@@ -4,7 +4,4 @@
 
 ## Статьи
 
-- [Сравнительный анализ ИИ моделей (март 2026)](ai-models-comparison-2026.md) — Claude Opus 4.6, MiniMax M2.5/M2.7, Kimi K2.5 и другие: стоимость, бенчмарки, практическая эффективность
-- [Cursor IDE как LLM-proxy](cursor-llm-proxy.md) — аналитический обзор использования Cursor IDE в качестве прокси к LLM
-- [Утилита LLM от Simon Willison](llm-cli-tool.md) — аналитический обзор CLI-инструмента для работы с языковыми моделями
-- [Управление буфером обмена через SSH](ssh-clipboard-forwarding.md) — подходы к проброске clipboard при работе на удалённых серверах
+{{ article_list() }}

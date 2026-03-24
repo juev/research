@@ -30,6 +30,7 @@ theme:
 plugins:
   - search:
       lang: ru
+  - awesome-nav
 
 markdown_extensions:
   - toc:
@@ -43,10 +44,3 @@ markdown_extensions:
   - footnotes
   - tables
 
-nav:
-  - Главная: index.md
-  - Статьи:
-      - Сравнение ИИ моделей: ai-models-comparison-2026.md
-      - Cursor IDE как LLM-proxy: cursor-llm-proxy.md
-      - Утилита LLM: llm-cli-tool.md
-      - SSH clipboard forwarding: ssh-clipboard-forwarding.md

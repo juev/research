@@ -1,12 +1,7 @@
-# Утилита LLM от Simon Willison: аналитический обзор
-
-## Metadata
-
-- **Date**: 2026-03-23
-- **Research query**: исследовать утилиту llm — назначение, использование, области применения, совместимость с Claude Code
-- **Sources**: 22
-- **Citation coverage**: 92%
-- **Mode**: deep
+---
+title: "Утилита LLM от Simon Willison: аналитический обзор"
+date: 2026-03-23
+---
 
 ## Аннотация
 
@@ -346,11 +341,6 @@ llm -m claude-sonnet-4-5 "review this code: $(cat function.py)"
 [^15]: "2026 Coding CLI Tools Comparison." Tembo, 2026. <https://www.tembo.io/blog/coding-cli-tools-comparison>
 [^16]: "Top 5 CLI-Based AI Coding Agents." Pinggy, 2026. <https://pinggy.io/blog/top_cli_based_ai_coding_agents/>
 [^17]: "LLMs on the Command Line." Hacker News Discussion, 2024. <https://news.ycombinator.com/item?id=40782755>
-[^18]: "LLM Documentation." Datasette, 2026. <https://llm.datasette.io/en/stable/>
-[^19]: Simon Willison. "My LLM CLI tool now supports self-hosted models." Substack, 2025. <https://simonw.substack.com/p/my-llm-cli-tool-now-supports-self>
-[^20]: "Claude, Claude API, and Claude Code: What's the Difference?" Eval Blog, 2026. <https://eval.16x.engineer/blog/claude-vs-claude-api-vs-claude-code>
-[^21]: Samuel Liedtke. "Using LLMs on the command line." Blog, 2025. <https://www.samuelliedtke.com/blog/using-llms-on-the-command-line/>
-[^22]: Simon Willison. "Large language models can run tools from the terminal." Substack, 2025. <https://simonw.substack.com/p/large-language-models-can-run-tools>
 
 ## Quality Metrics
 

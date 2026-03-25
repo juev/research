@@ -1,0 +1,32 @@
+baseURL = "https://research.evsyukov.org/"
+languageCode = "ru"
+defaultContentLanguage = "ru"
+title = "Research"
+theme = "PaperMod"
+paginate = 20
+
+[params]
+  description = "Коллекция аналитических обзоров по инструментам и технологиям"
+  defaultTheme = "auto"
+  showReadingTime = true
+  showShareButtons = false
+  showBreadCrumbs = true
+  showCodeCopyButtons = true
+  hideSummary = true
+  mainSections = ["articles"]
+
+  disableSpecial1stPost = true
+  DateFormat = "2 January 2006"
+
+[markup.goldmark.extensions]
+  footnote = true
+
+[markup.goldmark.renderer]
+  unsafe = true
+
+[markup.tableOfContents]
+  startLevel = 2
+  endLevel = 3
+
+[outputs]
+  home = ["HTML", "RSS"]

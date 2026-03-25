@@ -342,6 +342,15 @@ outgoing:
 - **YaCy** как единственный поисковик — качество результатов недостаточно для повседневного использования [^13]
 - **Presearch** — не является self-hosted в классическом смысле, зависит от крипто-экономики [^14]
 
+## Quality Metrics
+
+- **Источников найдено**: 28
+- **Источников процитировано**: 22
+- **Типы источников**: official: 7, GitHub: 8, industry/blog: 5, community/forum: 2
+- **Покрытие цитатами**: ~92%
+- **Подвопросов исследовано**: 6
+- **Контраргументы проверены**: да (жизнеспособность Whoogle, приватность одного пользователя, метапоиск vs. собственный индекс)
+
 ## Источники
 
 [^1]: SearXNG Documentation — About SearXNG. <https://docs.searxng.org/user/about.html>
@@ -387,12 +396,3 @@ outgoing:
 [^21]: ZincSearch. <https://zincsearch.com>
 
 [^22]: SearXNG Configuration Guide — Cosmo Edge. <https://cosmo-edge.com/configure-searxng-better-search-results/>
-
-## Quality Metrics
-
-- **Источников найдено**: 28
-- **Источников процитировано**: 22
-- **Типы источников**: official: 7, GitHub: 8, industry/blog: 5, community/forum: 2
-- **Покрытие цитатами**: ~92%
-- **Подвопросов исследовано**: 6
-- **Контраргументы проверены**: да (жизнеспособность Whoogle, приватность одного пользователя, метапоиск vs. собственный индекс)

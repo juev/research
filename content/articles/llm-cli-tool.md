@@ -322,6 +322,19 @@ llm -m claude-sonnet-4-5 "review this code: $(cat function.py)"
 - Для экономии: использовать локальные модели через Ollama для черновиков и экспериментов, облачные — для финальных результатов
 - Для логирования: встроенная SQLite-база полезна для аудита, анализа затрат и отладки промптов
 
+## Quality Metrics
+
+| Metric | Value |
+|--------|-------|
+| Total sources | 22 |
+| Academic sources | 0 |
+| Official/documentation | 6 |
+| Industry reports | 2 |
+| News/journalism | 1 |
+| Blog/forum | 13 |
+| Citation coverage | 92% |
+| Counter-arguments searched | Yes |
+
 ## Источники
 
 [^1]: Simon Willison. "LLM — CLI utility and Python library for interacting with Large Language Models." GitHub, 2026. <https://github.com/simonw/llm>
@@ -341,16 +354,3 @@ llm -m claude-sonnet-4-5 "review this code: $(cat function.py)"
 [^15]: "2026 Coding CLI Tools Comparison." Tembo, 2026. <https://www.tembo.io/blog/coding-cli-tools-comparison>
 [^16]: "Top 5 CLI-Based AI Coding Agents." Pinggy, 2026. <https://pinggy.io/blog/top_cli_based_ai_coding_agents/>
 [^17]: "LLMs on the Command Line." Hacker News Discussion, 2024. <https://news.ycombinator.com/item?id=40782755>
-
-## Quality Metrics
-
-| Metric | Value |
-|--------|-------|
-| Total sources | 22 |
-| Academic sources | 0 |
-| Official/documentation | 6 |
-| Industry reports | 2 |
-| News/journalism | 1 |
-| Blog/forum | 13 |
-| Citation coverage | 92% |
-| Counter-arguments searched | Yes |

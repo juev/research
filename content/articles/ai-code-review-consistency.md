@@ -268,6 +268,23 @@ CodeRabbit формулирует смену парадигмы:
 - Fine-tuning на специфических кодовых базах vs универсальные модели
 - Оптимальные стратегии prompt engineering для стабильности ревью
 
+## Quality Metrics
+
+| Metric | Value |
+| ------ | ----- |
+| Total sources | 41 |
+| Academic sources | 14 |
+| Official/documentation | 6 |
+| Industry reports | 12 |
+| News/journalism | 4 |
+| Blog/forum | 10 |
+| Citation coverage | 93% |
+| Counter-arguments searched | Yes |
+| Research rounds | 3 (1 initial + 2 iterative deepening) |
+| Questions emerged | 12 |
+| Questions resolved | 12 |
+| Questions insufficient data | 0 |
+
 ## Источники
 
 [^1]: Microsoft Engineering. "Enhancing Code Quality at Scale with AI-Powered Code Reviews." Engineering@Microsoft, 2025. <https://devblogs.microsoft.com/engineering-at-microsoft/enhancing-code-quality-at-scale-with-ai-powered-code-reviews/>
@@ -311,20 +328,3 @@ CodeRabbit формулирует смену парадигмы:
 [^39]: PropelCode. "Reducing AI Code Review False Positives: Practical Techniques." 2025. <https://www.propelcode.ai/blog/ai-code-review-false-positives-reducing-noise>
 [^40]: CodeRabbit. "2025 was the year of AI speed. 2026 will be the year of AI quality." 2026. <https://www.coderabbit.ai/blog/2025-was-the-year-of-ai-speed-2026-will-be-the-year-of-ai-quality>
 [^41]: "Automated Code Review In Practice." arXiv:2412.18531, 2024. <https://arxiv.org/abs/2412.18531>
-
-## Quality Metrics
-
-| Metric | Value |
-| ------ | ----- |
-| Total sources | 41 |
-| Academic sources | 14 |
-| Official/documentation | 6 |
-| Industry reports | 12 |
-| News/journalism | 4 |
-| Blog/forum | 10 |
-| Citation coverage | 93% |
-| Counter-arguments searched | Yes |
-| Research rounds | 3 (1 initial + 2 iterative deepening) |
-| Questions emerged | 12 |
-| Questions resolved | 12 |
-| Questions insufficient data | 0 |

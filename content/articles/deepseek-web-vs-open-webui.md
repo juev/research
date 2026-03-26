@@ -196,6 +196,78 @@ Open-WebUI поддерживает Exa как **нативный поисков
 
 Сообщество разработало обходное решение — **OpenRouter Integration Subsystem** (rbb-dev/Open-WebUI-OpenRouter-pipe), предоставляющий переключатель веб-поиска с корректной обработкой цитат[^34]. При использовании этого решения двойной поиск предотвращается: OpenRouter search имеет приоритет над нативным поиском Open-WebUI[^34].
 
+### Проблема суффикса `:online` при автоматическом получении моделей
+
+#### Почему `:online` модели не появляются в списке
+
+При подключении OpenRouter через Settings → Connections Open-WebUI запрашивает список моделей через стандартный endpoint `/v1/models`[^35]. Этот endpoint возвращает только **базовые идентификаторы** моделей: `deepseek/deepseek-chat`, `anthropic/claude-sonnet-4-5`, `openai/gpt-5.2` и т.д.[^36]. Варианты с суффиксами (`:online`, `:free`, `:nitro`, `:thinking`, `:extended`, `:exacto`) — это **динамические модификаторы поведения**, а не отдельные модели в каталоге OpenRouter[^37]. Каждый суффикс является сокращением для соответствующего JSON-параметра в теле запроса[^38]:
+
+- `:online` эквивалентен `"plugins": [{"id": "web"}]`
+- `:nitro` эквивалентен `"provider": {"sort": "throughput"}`
+- `:free` маршрутизирует к бесплатным провайдерам
+
+Поскольку `/v1/models` не содержит записей вида `deepseek/deepseek-chat:online`, Open-WebUI не отображает их в выпадающем списке моделей. Это ожидаемое поведение — суффиксы не являются моделями, а модификаторами запроса[^37].
+
+#### Ручное добавление через Model IDs (Filter)
+
+Open-WebUI позволяет вручную добавлять произвольные идентификаторы моделей через механизм allowlist[^35]. Процесс:
+
+1. Перейти в **Settings → Connections** → выбрать подключение OpenRouter
+2. В поле **Model IDs (Filter)** ввести идентификатор с суффиксом, например `deepseek/deepseek-chat:online`
+3. Нажать **+** для добавления
+4. Сохранить подключение
+
+Модель появится в выпадающем списке и при выборе Open-WebUI отправит запрос с полным идентификатором `deepseek/deepseek-chat:online` на OpenRouter API. OpenRouter распознает суффикс и активирует веб-поиск автоматически[^32].
+
+Однако этот подход имеет **существенное ограничение**: Filter-функции Open-WebUI валидируют имена моделей по списку известных моделей перед обработкой запроса[^39]. Модели с суффиксом `:variant` могут быть отклонены на этапе валидации, что приводит к ошибке вместо выполнения запроса. Степень проблемы зависит от версии Open-WebUI и установленных фильтров[^39].
+
+#### Нужно ли отдельно включать веб-поиск в модели?
+
+**Нет.** Суффикс `:online` — это всё, что требуется для активации веб-поиска на стороне OpenRouter[^32][^29]. Включать функцию веб-поиска в самой модели (через настройки Open-WebUI: Web Search toggle, RAG-пайплайн или агентный режим) **не нужно и не рекомендуется**. OpenRouter обрабатывает поиск прозрачно:
+
+1. Получает запрос с суффиксом `:online`
+2. Извлекает суффикс и активирует web-плагин
+3. Передаёт пользовательский промпт в поисковый движок (Exa для большинства моделей, нативный поиск для OpenAI/Anthropic/Perplexity/xAI)[^29]
+4. Объединяет результаты поиска (по умолчанию 5) с оригинальным промптом
+5. Отправляет дополненный контекст целевой модели[^29]
+
+Если одновременно с `:online` включить веб-поиск в Open-WebUI, произойдёт **дублирование поиска**: Open-WebUI выполнит свой поиск через настроенный провайдер, а OpenRouter — через Exa. Модель получит два набора поисковых результатов, что увеличит расход токенов и может ухудшить качество ответа из-за конфликтующего контекста[^34].
+
+#### Рекомендуемые решения через pipe-функции
+
+Наиболее надёжный способ использования OpenRouter web search в Open-WebUI — установка специализированных pipe-функций, которые обходят проблему валидации имён и дублирования поиска:
+
+**OpenRouter Integration Subsystem** (rbb-dev/Open-WebUI-OpenRouter-pipe, v2.3.0)[^40] — полнофункциональная интеграция с 350+ моделями. Поддерживает двойной переключатель: нативный поиск Open-WebUI и OpenRouter search как отдельные тогглы. При активации OpenRouter Search автоматически блокирует нативный поиск Open-WebUI для предотвращения дублирования[^34]. Устанавливается через Admin Panel → Functions → Import from Link. Три конфигурационных флага управляют автоматическим развёртыванием:
+
+- `AUTO_INSTALL_ORS_FILTER` — установка фильтра в базу Open-WebUI
+- `AUTO_ATTACH_ORS_FILTER` — привязка фильтра к совместимым моделям
+- `AUTO_DEFAULT_OPENROUTER_SEARCH_FILTER` — активация по умолчанию на поддерживаемых моделях[^34]
+
+**OpenWebUI-OpenRouter Integration** (admirito/openwebui-openrouter-integration)[^39] — набор filter-функций с пользовательскими тогглами для функций OpenRouter. Решает проблему валидации имён принципиально иначе: вместо модификации идентификатора модели (суффикс `:online`) инжектирует параметры `plugins: [{"id": "web"}]` напрямую в тело запроса[^39]. Это обходит валидацию Open-WebUI, так как идентификатор модели остаётся стандартным.
+
+> «Open WebUI Filter functions validate model names against known models before processing. Models with `:variant` suffixes are rejected at this validation stage. [...] Rather than using `:online` suffix notation, this integration uses request body parameters to activate web search functionality»[^39].
+
+**OpenRouter Integration for OpenWebUI** (preswest/openrouter_integration_for_openwebui)[^41] — базовая функция для доступа к моделям OpenRouter с поддержкой цитат и reasoning-токенов. Более простое решение без управления веб-поиском.
+
+#### Конфигурация web-плагина через API
+
+При использовании pipe-функций, инжектирующих параметры в тело запроса, доступна тонкая настройка поведения web-плагина OpenRouter[^29]:
+
+```json
+{
+  "plugins": [{
+    "id": "web",
+    "max_results": 5,
+    "search_prompt": "Найди актуальную информацию по запросу",
+    "engine": "exa",
+    "include_domains": ["docs.python.org", "*.github.com"],
+    "exclude_domains": ["reddit.com"]
+  }]
+}
+```
+
+Доступные движки: `exa` (по умолчанию для большинства моделей, семантический поиск), `native` (нативный поиск провайдера — для OpenAI, Anthropic, Perplexity, xAI), `firecrawl` (BYOK-модель), `parallel` (комбинированный)[^29]. Фильтрация по доменам поддерживается для Exa и Parallel, но не для Firecrawl[^29].
+
 ### Сравнение подходов к поиску
 
 | Параметр | Open-WebUI + Exa (нативно) | OpenRouter `:online` | Open-WebUI + Google PSE/Brave | DeepSeek web |
@@ -265,17 +337,17 @@ Open-WebUI поддерживает Exa как **нативный поисков
 
 | Metric | Value |
 |--------|-------|
-| Total sources | 34 |
+| Total sources | 41 |
 | Academic sources | 0 |
-| Official/documentation | 14 |
+| Official/documentation | 19 |
 | Industry reports | 6 |
 | News/journalism | 3 |
-| Blog/forum | 11 |
-| Citation coverage | 92% |
+| Blog/forum | 13 |
+| Citation coverage | 93% |
 | Counter-arguments searched | Yes |
-| Research rounds | 3 |
-| Questions emerged | 12 |
-| Questions resolved | 9 |
+| Research rounds | 4 |
+| Questions emerged | 17 |
+| Questions resolved | 14 |
 | Questions insufficient data | 3 |
 
 [^1]: DeepSeek-V3 GitHub. "Issue #196: System Prompt Discussion." GitHub, 2025. <https://github.com/deepseek-ai/DeepSeek-V3/issues/196>
@@ -312,3 +384,10 @@ Open-WebUI поддерживает Exa как **нативный поисков
 [^32]: OpenRouter. "Online Variant: Real-Time Web Search." OpenRouter Documentation, 2026. <https://openrouter.ai/docs/guides/routing/model-variants/online>
 [^33]: GitHub Open-WebUI Issue #8860. "Support OpenRouter's Web Search API." GitHub, 2025. <https://github.com/open-webui/open-webui/issues/8860>
 [^34]: rbb-dev. "Web Search: Open-WebUI vs OpenRouter Search Comparison." GitHub, 2025. <https://github.com/rbb-dev/Open-WebUI-OpenRouter-pipe/blob/main/docs/web_search_owui_vs_openrouter_search.md>
+[^35]: Open WebUI Documentation. "OpenAI-Compatible Provider Setup." Open WebUI, 2026. <https://docs.openwebui.com/getting-started/quick-start/connect-a-provider/starting-with-openai-compatible/>
+[^36]: OpenRouter. "List All Models and Their Properties." OpenRouter API Documentation, 2026. <https://openrouter.ai/docs/api/api-reference/models/get-models>
+[^37]: OpenRouter. "Model Variants Overview." OpenRouter Documentation, 2026. <https://openrouter.ai/docs/guides/overview/models>
+[^38]: simonw/llm-openrouter. "Issue #20: OpenRouter Model :suffixes." GitHub, 2025. <https://github.com/simonw/llm-openrouter/issues/20>
+[^39]: admirito/openwebui-openrouter-integration. "OpenRouter Integration Filters for Open WebUI." GitHub, 2026. <https://github.com/admirito/openwebui-openrouter-integration>
+[^40]: rbb-dev/Open-WebUI-OpenRouter-pipe. "OpenRouter Integration Subsystem for Open WebUI." GitHub, 2026. <https://github.com/rbb-dev/Open-WebUI-OpenRouter-pipe>
+[^41]: preswest. "OpenRouter Integration for OpenWebUI." Open WebUI Community, 2025. <https://openwebui.com/f/preswest/openrouter_integration_for_openwebui>

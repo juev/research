@@ -268,6 +268,91 @@ Open-WebUI позволяет вручную добавлять произвол
 
 Доступные движки: `exa` (по умолчанию для большинства моделей, семантический поиск), `native` (нативный поиск провайдера — для OpenAI, Anthropic, Perplexity, xAI), `firecrawl` (BYOK-модель), `parallel` (комбинированный)[^29]. Фильтрация по доменам поддерживается для Exa и Parallel, но не для Firecrawl[^29].
 
+### Ошибка «Chunk too big» при использовании `:online` моделей
+
+#### Описание проблемы
+
+При использовании моделей OpenRouter с суффиксом `:online` (например, `deepseek/deepseek-chat:online` или `perplexity/sonar-deep-research:online`) в Open-WebUI пользователи сталкиваются с ошибкой `ValueError: Chunk too big`[^42][^43]. Ошибка возникает в интерфейсе Open-WebUI — прямые API-запросы к OpenRouter при этом выполняются успешно, что подтверждает локализацию проблемы на стороне Open-WebUI[^42].
+
+#### Техническая причина
+
+Корневая причина — ограничение буфера библиотеки **aiohttp**, которую Open-WebUI использует для обработки потоковых (streaming) ответов по протоколу Server-Sent Events (SSE)[^44][^45]. Механизм работает следующим образом:
+
+1. Open-WebUI получает ответ от OpenRouter в режиме streaming
+2. aiohttp читает данные построчно через `readuntil()`, буферизируя содержимое до символа новой строки
+3. Когда модель с суффиксом `:online` возвращает ответ, OpenRouter **инжектирует результаты веб-поиска** (сниппеты, URL, цитаты от Exa) прямо в поток данных[^29]
+4. Единичная SSE-строка с инжектированными поисковыми результатами может превысить **дефолтный буфер aiohttp (~64 КиБ)**[^45]
+5. aiohttp выбрасывает `ValueError("Chunk too big")` вместо буферизации превышающего данных[^44]
+
+Проблемный код находится в `backend/open_webui/routers/openai.py` (строки 929–977) и `backend/open_webui/utils/middleware.py` (строка 1573), где происходит итерация по потоку ответа[^44][^45].
+
+> «When SSE single-line data is extremely large (likely exceeding 16KB), directly using Python's asynchronous iterator to traverse aiohttp's response.content forces the use of aiohttp's built-in buffer size, which cannot be configured»[^44].
+
+#### Почему `:online` модели вызывают эту ошибку чаще
+
+Суффикс `:online` активирует web-плагин OpenRouter, который добавляет к ответу поисковые результаты в формате аннотаций (URL, заголовки, фрагменты контента)[^29]. При 5 результатах по умолчанию объём инжектированных данных может составить десятки килобайт в одной SSE-строке, что гарантированно превышает дефолтный буфер aiohttp. Аналогичная проблема воспроизводится с любыми моделями, генерирующими крупные SSE-чанки: Gemini с inline-изображениями (base64), Perplexity с развёрнутыми цитатами[^43][^46].
+
+#### Решения
+
+**Решение 1: Увеличить буфер потоковых ответов (рекомендуемое)**
+
+Установить переменную окружения `CHAT_STREAM_RESPONSE_CHUNK_MAX_BUFFER_SIZE`, задающую максимальный размер буфера в байтах для обработки потоковых чанков[^47]. При превышении этого лимита система возвращает пустой JSON-объект и пропускает данные до появления чанков нормального размера:
+
+```bash
+# В docker-compose.yml или .env файле Open-WebUI
+CHAT_STREAM_RESPONSE_CHUNK_MAX_BUFFER_SIZE=20971520  # 20 МиБ
+```
+
+Значение 20 МиБ (`20971520`) достаточно для большинства сценариев с `:online` моделями[^46]. Для моделей, генерирующих изображения inline (Gemini), может потребоваться увеличение до 32+ МиБ.
+
+**Решение 2: Отключить streaming для конкретной модели**
+
+В Open-WebUI можно создать кастомную модель-обёртку с отключённым streaming[^48]:
+
+1. Перейти в **Workspace → Models → + New Model**
+2. Выбрать базовую модель (DeepSeek через OpenRouter)
+3. В **Advanced Parameters** установить `"stream": false`
+4. Сохранить и использовать эту модель для запросов с `:online`
+
+При отключённом streaming ответ приходит целиком, минуя буфер aiohttp. Однако этот подход имеет ограничение: отключение streaming может нарушить работу tool calling в Open-WebUI[^48].
+
+**Решение 3: Использовать pipe-функцию с chunk-based обработкой**
+
+Предложенное сообществом исправление на уровне кода заменяет построчную итерацию aiohttp на chunk-based обработку с ручным разбором границ строк[^44]:
+
+```python
+async def sse_line_generator():
+    buffer = b""
+    async for chunk in r.content.iter_any():
+        buffer += chunk
+        while b"\n" in buffer:
+            line, buffer = buffer.split(b"\n", 1)
+            yield line + b"\n"
+    if buffer:
+        yield buffer
+```
+
+В сочетании с увеличением `read_bufsize=128 * 1024` в `ClientSession` это устраняет проблему на уровне транспорта[^44].
+
+**Решение 4: Уменьшить объём инжектируемых поисковых данных**
+
+При использовании pipe-функций (admirito или rbb-dev) можно уменьшить `max_results` в конфигурации web-плагина OpenRouter[^29]:
+
+```json
+{
+  "plugins": [{
+    "id": "web",
+    "max_results": 2
+  }]
+}
+```
+
+Снижение с 5 до 2 результатов уменьшает объём SSE-чанка в 2–3 раза, что может оказаться достаточным для обхода лимита буфера без изменения переменных окружения.
+
+#### Статус исправления в Open-WebUI
+
+PR #20779 («fix: large base64 images streaming»), принятый в феврале 2026 года, реализовал chunk-based обработку потока для крупных base64-изображений[^46]. Однако это исправление **не решает** проблему с `:online` моделями OpenRouter: ошибка воспроизводится в Open-WebUI v0.8.11 (март 2026). Вероятная причина — PR #20779 адресует конкретный сценарий с inline-изображениями, тогда как инжекция поисковых результатов OpenRouter проходит по другому пути в middleware. До выхода целевого исправления необходимо использовать решения 1–4, описанные выше.
+
 ### Сравнение подходов к поиску
 
 | Параметр | Open-WebUI + Exa (нативно) | OpenRouter `:online` | Open-WebUI + Google PSE/Brave | DeepSeek web |
@@ -337,17 +422,17 @@ Open-WebUI позволяет вручную добавлять произвол
 
 | Metric | Value |
 |--------|-------|
-| Total sources | 41 |
+| Total sources | 48 |
 | Academic sources | 0 |
-| Official/documentation | 19 |
+| Official/documentation | 21 |
 | Industry reports | 6 |
 | News/journalism | 3 |
-| Blog/forum | 13 |
-| Citation coverage | 93% |
+| Blog/forum | 18 |
+| Citation coverage | 94% |
 | Counter-arguments searched | Yes |
-| Research rounds | 4 |
-| Questions emerged | 17 |
-| Questions resolved | 14 |
+| Research rounds | 5 |
+| Questions emerged | 22 |
+| Questions resolved | 19 |
 | Questions insufficient data | 3 |
 
 [^1]: DeepSeek-V3 GitHub. "Issue #196: System Prompt Discussion." GitHub, 2025. <https://github.com/deepseek-ai/DeepSeek-V3/issues/196>
@@ -391,3 +476,10 @@ Open-WebUI позволяет вручную добавлять произвол
 [^39]: admirito/openwebui-openrouter-integration. "OpenRouter Integration Filters for Open WebUI." GitHub, 2026. <https://github.com/admirito/openwebui-openrouter-integration>
 [^40]: rbb-dev/Open-WebUI-OpenRouter-pipe. "OpenRouter Integration Subsystem for Open WebUI." GitHub, 2026. <https://github.com/rbb-dev/Open-WebUI-OpenRouter-pipe>
 [^41]: preswest. "OpenRouter Integration for OpenWebUI." Open WebUI Community, 2025. <https://openwebui.com/f/preswest/openrouter_integration_for_openwebui>
+[^42]: GitHub Open-WebUI Discussion #19803. "Chunk too big error when using perplexity/sonar-deep-research:online in OpenRouter." GitHub, 2026. <https://github.com/open-webui/open-webui/discussions/19803>
+[^43]: GitHub Open-WebUI Issue #18373. "Gemini Nano Banana added through OpenRouter causes Chunk too Big error." GitHub, 2025. <https://github.com/open-webui/open-webui/issues/18373>
+[^44]: GitHub Open-WebUI Issue #17626. "Chunk too big error when using Google Gemini 2.5 Flash with image input." GitHub, 2025. <https://github.com/open-webui/open-webui/issues/17626>
+[^45]: GitHub Open-WebUI Discussion #10303. "ValueError: Chunk too big when streaming large files from pipelines." GitHub, 2025. <https://github.com/open-webui/open-webui/discussions/10303>
+[^46]: GitHub Open-WebUI Issue #20634. "OpenRouter image generation Chunk too big error." GitHub, 2026. <https://github.com/open-webui/open-webui/issues/20634>
+[^47]: Open WebUI Documentation. "Environment Variable Configuration." Open WebUI, 2026. <https://docs.openwebui.com/reference/env-configuration/>
+[^48]: GitHub Open-WebUI Discussion #4065. "Disabling streaming." GitHub, 2024. <https://github.com/open-webui/open-webui/discussions/4065>

@@ -41,3 +41,9 @@ date: 2026-03-25
 ## Deep Research
 
 При выполнении `/deep-research` результат сохранять в `content/articles/<slug>.md` с frontmatter (title + date). Slug должен отражать тему исследования.
+
+### Структура статьи
+
+- **Без секции Metadata** — не добавлять блок с Date, Research query, Sources, Citation coverage, Mode в начало статьи. Frontmatter (title + date) достаточно.
+- **Quality Metrics перед Источники** — таблица Quality Metrics размещается ПЕРЕД секцией «Источники», а не после неё.
+- Порядок финальных секций: `## Quality Metrics` → `## Источники`

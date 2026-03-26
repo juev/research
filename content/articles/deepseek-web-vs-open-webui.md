@@ -159,6 +159,62 @@ Open-WebUI по умолчанию устанавливает `max_tokens` в 40
 - Reranking: BAAI/bge-reranker-v2-m3
 - Увеличить Embedding Batch Size с 1 до 10 для повышения производительности
 
+## OpenRouter и Exa search: альтернативный путь к качественному поиску
+
+### Что такое Exa search
+
+Exa (exa.ai) — специализированный поисковый API, разработанный с нуля для интеграции с LLM[^25]. В отличие от традиционных поисковых API (Google PSE, Brave, SearXNG), которые используют keyword-matching, Exa применяет **нейросетевой семантический поиск**: запросы и веб-страницы конвертируются в векторные представления (embeddings), а релевантность определяется по семантической близости в векторном пространстве[^25]. Этот подход, называемый «next-link prediction», позволяет модели понимать, что запросы «battery storage challenges» и «difficulties with renewable power accumulation» семантически эквивалентны, несмотря на отсутствие общих ключевых слов.
+
+Exa предлагает несколько режимов поиска: neural (чисто семантический), auto (гибрид keyword + embeddings, режим по умолчанию), deep (с синтезом), deep-reasoning (с цепочкой рассуждений) и instant (минимальная латентность, менее 200 мс)[^26]. Ключевое преимущество для LLM-интеграции — возможность получения не только URL и сниппетов, но и полного текста страниц, AI-выделенных релевантных фрагментов (highlights) и генеративных саммари[^25].
+
+На бенчмарках Exa демонстрирует превосходство над конкурентами: 81% на WebWalker (multi-hop retrieval) против 71% у Tavily, лидерство на OpenAI SimpleQA для фактологических вопросов с веб-данными[^27]. Функция query-dependent highlights обеспечивает на 10% более высокую точность на RAG-бенчмарках при сокращении объёма передаваемых токенов на 50–75%[^28].
+
+### Интеграция Exa через OpenRouter
+
+OpenRouter предоставляет доступ к Exa search для **всех 400+ моделей** на платформе через механизм плагинов[^29]. Активация осуществляется двумя способами:
+
+1. **Суффикс `:online`** к слагу модели: `openai/gpt-4o:online`, `anthropic/claude-3:online`, `deepseek/deepseek-chat:online`
+2. **Явное указание плагина** в API-запросе с параметрами конфигурации (engine, max_results, domain filters)
+
+Технически интеграция работает через **plugin-based архитектуру**, а не через tool calling[^29]: OpenRouter автоматически отправляет запрос в Exa, получает результаты (по умолчанию 5), оборачивает сниппеты в системное сообщение и передаёт дополненный контекст целевой модели. Для моделей OpenAI, Anthropic, Perplexity и xAI приоритет отдаётся нативному поиску провайдера; для остальных моделей (включая DeepSeek) используется Exa[^29].
+
+> «OpenRouter selected Exa as its sole search engine partner based on superior benchmark performance and LLM-ready output format»[^30].
+
+Стоимость: **$4 за 1000 результатов** через кредиты OpenRouter, что при 5 результатах по умолчанию составляет ~$0.02 за запрос плюс стоимость токенов модели[^29]. Доступна фильтрация по доменам (include/exclude) для повышения релевантности[^29].
+
+### Два пути интеграции Exa в Open-WebUI
+
+Open-WebUI поддерживает Exa как **нативный поисковый провайдер** наряду с Google PSE, Brave, SearXNG и другими[^31]. Это создаёт два принципиально разных пути использования Exa:
+
+**Путь 1: Exa как нативный провайдер Open-WebUI (рекомендуемый)**
+
+Настройка: Admin Panel → Settings → Web Search → выбрать «Exa» → указать API-ключ с exa.ai[^31]. Альтернативно через переменную окружения `EXA_API_KEY`. В этом режиме Open-WebUI самостоятельно выполняет поисковые запросы к Exa API и обрабатывает результаты через свой RAG-пайплайн или агентный режим. Модель может быть любой, включая DeepSeek через прямое API-подключение.
+
+**Путь 2: Exa через OpenRouter `:online` модели**
+
+При подключении OpenRouter как провайдера в Open-WebUI (через `OPENAI_API_BASE=https://openrouter.ai/api/v1`) можно использовать модели с суффиксом `:online`[^32]. Однако Open-WebUI **не поддерживает нативный проброс** параметров веб-поиска OpenRouter — это открытый feature request (GitHub issue #8860)[^33]. Результаты поиска инжектируются OpenRouter на уровне провайдера, до того как Open-WebUI их видит, что создаёт проблему прозрачности: Open-WebUI не знает, что поиск был выполнен, и может запустить собственный дублирующий поиск[^34].
+
+Сообщество разработало обходное решение — **OpenRouter Integration Subsystem** (rbb-dev/Open-WebUI-OpenRouter-pipe), предоставляющий переключатель веб-поиска с корректной обработкой цитат[^34]. При использовании этого решения двойной поиск предотвращается: OpenRouter search имеет приоритет над нативным поиском Open-WebUI[^34].
+
+### Сравнение подходов к поиску
+
+| Параметр | Open-WebUI + Exa (нативно) | OpenRouter `:online` | Open-WebUI + Google PSE/Brave | DeepSeek web |
+|----------|---------------------------|---------------------|-------------------------------|-------------|
+| Тип поиска | Семантический (neural) | Семантический (neural) | Keyword-based | Оптимизированный tool calling |
+| Контроль | Полный (RAG/агентный) | Минимальный (чёрный ящик) | Полный (RAG/агентный) | Нет (закрытая система) |
+| Качество | Высокое (81% WebWalker) | Высокое (тот же Exa) | Среднее | Высокое |
+| Стоимость за запрос | ~$0.035 (Exa напрямую) | ~$0.02 (через OpenRouter) | Бесплатно – $0.01 | Бесплатно (в рамках тарифа) |
+| Интеграция с Open-WebUI | Нативная | Через pipe/workaround | Нативная | Не применимо |
+| Агентный режим | Да | Нет (plugin injection) | Да | Да (tool calling) |
+
+### Влияние на качество ответов
+
+Замена keyword-based провайдера (Google PSE, Brave) на Exa в Open-WebUI может существенно повысить качество поиска для сложных, нюансированных запросов. На комплексных запросах Exa находит **в 5 раз больше релевантных результатов** по сравнению с keyword-подходами[^27]. Функция highlights, доступная через Exa API, позволяет передавать модели только семантически релевантные фрагменты, а не полные страницы, что сокращает расход токенов и повышает точность[^28].
+
+Однако для простых фактологических запросов (даты, имена, цифры) разница между Exa и keyword-based провайдерами менее заметна. Кроме того, индекс Exa может быть менее полным, чем у Google — это ограничение компенсируется качеством ранжирования, но не количеством покрытия[^28].
+
+**Рекомендация**: для максимального приближения к качеству DeepSeek web использовать **Exa как нативный провайдер Open-WebUI в агентном режиме** — это сочетает семантический поиск Exa с автономным исследовательским циклом Open-WebUI (THINK → ACT → EVALUATE → ITERATE)[^7], наиболее близким к поведению DeepSeek web[^3].
+
 ## Дискуссионные вопросы и противоречия
 
 ### Можно ли полностью воспроизвести качество DeepSeek web в Open-WebUI?
@@ -203,23 +259,23 @@ Open-WebUI по умолчанию устанавливает `max_tokens` в 40
 
 Полное воспроизведение качества DeepSeek web в Open-WebUI **невозможно** из-за недокументированных компонентов (системный промпт, параметры, версия модели). Однако **значительное приближение** достижимо при выполнении ключевых шагов: настройка качественного веб-поиска с агентным режимом, увеличение max_tokens, оптимизация RAG-шаблона и корректные параметры генерации. По совокупным оценкам сообщества, эти меры могут сократить разрыв на 60–80%.
 
-Для пользователей, которым критична максимальная близость к DeepSeek web, наиболее перспективным направлением является использование агентного режима Open-WebUI с DeepSeek V3.1+ (поддерживающим «thinking with tools») в сочетании с качественным поисковым провайдером (Google PSE или Brave Search).
+Для пользователей, которым критична максимальная близость к DeepSeek web, наиболее перспективным направлением является использование агентного режима Open-WebUI с DeepSeek V3.1+ (поддерживающим «thinking with tools») в сочетании с семантическим поисковым провайдером. Интеграция Exa search — как нативного провайдера Open-WebUI или через OpenRouter `:online` модели — представляет шестой фактор, способный существенно сократить разрыв в качестве благодаря нейросетевому поиску, оптимизированному для LLM-задач[^25][^27].
 
 ## Quality Metrics
 
 | Metric | Value |
 |--------|-------|
-| Total sources | 24 |
+| Total sources | 34 |
 | Academic sources | 0 |
-| Official/documentation | 8 |
-| Industry reports | 4 |
+| Official/documentation | 14 |
+| Industry reports | 6 |
 | News/journalism | 3 |
-| Blog/forum | 9 |
+| Blog/forum | 11 |
 | Citation coverage | 92% |
 | Counter-arguments searched | Yes |
-| Research rounds | 2 |
-| Questions emerged | 8 |
-| Questions resolved | 5 |
+| Research rounds | 3 |
+| Questions emerged | 12 |
+| Questions resolved | 9 |
 | Questions insufficient data | 3 |
 
 ## Источники
@@ -248,3 +304,13 @@ Open-WebUI по умолчанию устанавливает `max_tokens` в 40
 [^22]: DeepSeek API Documentation. "V3.1 Release Notes." DeepSeek, 2025. <https://api-docs.deepseek.com/news/news250821>
 [^23]: Security Boulevard. "Analyzing DeepSeek's System Prompt: Jailbreaking Generative AI." Security Boulevard, 2025. <https://securityboulevard.com/2025/01/analyzing-deepseeks-system-prompt-jailbreaking-generative-ai/>
 [^24]: Open WebUI Documentation. "RAG Tutorial." Open WebUI, 2026. <https://docs.openwebui.com/tutorials/tips/rag-tutorial/>
+[^25]: Exa AI. "How Exa Search Works." Exa Documentation, 2026. <https://exa.ai/docs/reference/how-exa-search-works>
+[^26]: Exa AI. "Search API Reference." Exa Documentation, 2026. <https://exa.ai/docs/reference/search>
+[^27]: Exa AI. "Web Search API Evals: Exa vs Competition." Exa Blog, 2026. <https://exa.ai/blog/api-evals>
+[^28]: Exa AI. "Exa vs Tavily: AI Search API Comparison." Exa, 2026. <https://exa.ai/versus/tavily>
+[^29]: OpenRouter. "Web Search: Add Real-time Web Data to AI Model Responses." OpenRouter Documentation, 2026. <https://openrouter.ai/docs/guides/features/plugins/web-search>
+[^30]: Exa AI. "OpenRouter Integrates with Exa's Semantic Search Technology." Exa Blog, 2026. <https://exa.ai/blog/openrouter-and-exa>
+[^31]: Open WebUI Documentation. "Exa AI Web Search Provider." Open WebUI, 2026. <https://docs.openwebui.com/features/chat-conversations/web-search/providers/exa/>
+[^32]: OpenRouter. "Online Variant: Real-Time Web Search." OpenRouter Documentation, 2026. <https://openrouter.ai/docs/guides/routing/model-variants/online>
+[^33]: GitHub Open-WebUI Issue #8860. "Support OpenRouter's Web Search API." GitHub, 2025. <https://github.com/open-webui/open-webui/issues/8860>
+[^34]: rbb-dev. "Web Search: Open-WebUI vs OpenRouter Search Comparison." GitHub, 2025. <https://github.com/rbb-dev/Open-WebUI-OpenRouter-pipe/blob/main/docs/web_search_owui_vs_openrouter_search.md>

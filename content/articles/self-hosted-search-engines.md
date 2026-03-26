@@ -351,8 +351,6 @@ outgoing:
 - **Подвопросов исследовано**: 6
 - **Контраргументы проверены**: да (жизнеспособность Whoogle, приватность одного пользователя, метапоиск vs. собственный индекс)
 
-## Источники
-
 [^1]: SearXNG Documentation — About SearXNG. <https://docs.searxng.org/user/about.html>
 
 [^2]: SearXNG GitHub Repository. <https://github.com/searxng/searxng>

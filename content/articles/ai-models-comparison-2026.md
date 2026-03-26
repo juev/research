@@ -344,8 +344,6 @@ MiniMax M2.5 (open-source, MoE 230B/10B active) достиг **80.2%** на SWE-
 
 ---
 
-## Источники
-
 [^1]: [Anthropic — Claude API Pricing](https://platform.claude.com/docs/en/about-claude/pricing)
 
 [^2]: [OpenAI — API Pricing](https://openai.com/api/pricing/)

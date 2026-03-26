@@ -327,8 +327,6 @@ SearXNG бесплатен и приватен, но качество резул
 | Покрытие цитированием | ~95% |
 | Исследовано подвопросов | 6 |
 
-## Источники
-
 [^1]: [Web search does not provide all information retrieved to the model — GitHub Discussion #8990](https://github.com/open-webui/open-webui/discussions/8990)
 
 [^2]: [Retrieval Augmented Generation (RAG) — Open WebUI Docs](https://docs.openwebui.com/features/chat-conversations/rag/)

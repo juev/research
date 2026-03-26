@@ -278,8 +278,6 @@ Open-WebUI поддерживает Exa как **нативный поисков
 | Questions resolved | 9 |
 | Questions insufficient data | 3 |
 
-## Источники
-
 [^1]: DeepSeek-V3 GitHub. "Issue #196: System Prompt Discussion." GitHub, 2025. <https://github.com/deepseek-ai/DeepSeek-V3/issues/196>
 [^2]: SerpAPI Blog. "Connect DeepSeek API with Real-Time Data." SerpAPI, 2025. <https://serpapi.com/blog/connect-deepseek-api-with-the-internet-google-search-and-more/>
 [^3]: Learn Prompting. "Guide to DeepSeek Chatbot." Learn Prompting, 2025. <https://learnprompting.org/blog/guide-deepseek-chatbot>

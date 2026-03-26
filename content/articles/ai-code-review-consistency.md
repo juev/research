@@ -277,8 +277,6 @@ CodeRabbit формулирует смену парадигмы:
 | Questions resolved | 12 |
 | Questions insufficient data | 0 |
 
-## Источники
-
 [^1]: Microsoft Engineering. "Enhancing Code Quality at Scale with AI-Powered Code Reviews." Engineering@Microsoft, 2025. <https://devblogs.microsoft.com/engineering-at-microsoft/enhancing-code-quality-at-scale-with-ai-powered-code-reviews/>
 [^2]: GitHub Blog. "60 million Copilot code reviews and counting." 2025. <https://github.blog/ai-and-ml/github-copilot/60-million-copilot-code-reviews-and-counting/>
 [^3]: SonarSource. "State of Code Developer Survey Report 2026." 2026. <https://www.sonarsource.com/blog/state-of-code-developer-survey-report-the-current-reality-of-ai-coding/>

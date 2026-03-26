@@ -335,8 +335,6 @@ llm -m claude-sonnet-4-5 "review this code: $(cat function.py)"
 | Citation coverage | 92% |
 | Counter-arguments searched | Yes |
 
-## Источники
-
 [^1]: Simon Willison. "LLM — CLI utility and Python library for interacting with Large Language Models." GitHub, 2026. <https://github.com/simonw/llm>
 [^2]: Simon Willison. "Language models on the command-line." Simon Willison's Weblog, 2024-06-17. <https://simonwillison.net/2024/Jun/17/cli-language-models/>
 [^3]: "Logging to SQLite." LLM Documentation, Datasette, 2026. <https://llm.datasette.io/en/stable/logging.html>

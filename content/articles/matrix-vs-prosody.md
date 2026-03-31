@@ -165,26 +165,26 @@ WantedBy=default.target
 
 ```caddy
 # Клиентский API
-matrix.evsyukov.org {
+matrix.example.org {
     reverse_proxy /_matrix/* matrix-synapse:8008
     reverse_proxy /_synapse/client/* matrix-synapse:8008
 }
 
 # Федерация (порт 8448)
-matrix.evsyukov.org:8448 {
+matrix.example.org:8448 {
     reverse_proxy /_matrix/* matrix-synapse:8008
 }
 
 # Well-known делегация (на основном домене)
-evsyukov.org {
+example.org {
     header /.well-known/matrix/* Content-Type application/json
     header /.well-known/matrix/* Access-Control-Allow-Origin *
-    respond /.well-known/matrix/server `{"m.server": "matrix.evsyukov.org:443"}`
-    respond /.well-known/matrix/client `{"m.homeserver":{"base_url":"https://matrix.evsyukov.org"}}`
+    respond /.well-known/matrix/server `{"m.server": "matrix.example.org:443"}`
+    respond /.well-known/matrix/client `{"m.homeserver":{"base_url":"https://matrix.example.org"}}`
 }
 ```
 
-Well-known делегация позволяет использовать JID `@user:evsyukov.org` при размещении сервера на `matrix.evsyukov.org` [^2] [^4].
+Well-known делегация позволяет использовать JID `@user:example.org` при размещении сервера на `matrix.example.org` [^2] [^4].
 
 ### 3.3 Tailscale и федерация
 

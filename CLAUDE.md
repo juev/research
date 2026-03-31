@@ -18,7 +18,7 @@ hugo --minify
 
 ## Архитектура
 
-- **content/articles/** — markdown-статьи. Каждая статья — отдельный `.md` файл с YAML frontmatter (title, date)
+- **content/articles/** — markdown-статьи. Каждая статья — отдельный `.md` файл с YAML frontmatter (title, date с временем в ISO 8601)
 - **content/_index.md** — главная страница
 - **hugo.toml** — конфигурация: PaperMod theme, markdown-расширения (footnotes, unsafe HTML)
 - **themes/PaperMod/** — тема (git submodule)
@@ -31,16 +31,18 @@ hugo --minify
 ```yaml
 ---
 title: "Название статьи"
-date: 2026-03-25
+date: 2026-03-25T14:30:00+03:00
 ---
 ```
+
+Формат даты — ISO 8601 с временем и timezone offset (`+03:00`). Время берётся на момент создания статьи. Это обеспечивает правильную сортировку статей, созданных в один день.
 
 1. Статья автоматически появится в списке на главной странице, отсортированная по дате (новые сверху)
 1. Язык контента — русский
 
 ## Deep Research
 
-При выполнении `/deep-research` результат сохранять в `content/articles/<slug>.md` с frontmatter (title + date). Slug должен отражать тему исследования.
+При выполнении `/deep-research` результат сохранять в `content/articles/<slug>.md` с frontmatter (title + date в ISO 8601 с временем). Slug должен отражать тему исследования.
 
 ### Структура статьи
 

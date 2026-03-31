@@ -1,6 +1,6 @@
 ---
 title: "IRC vs XMPP vs Matrix: self-hosted семейный чат"
-date: 2026-03-31
+date: 2026-03-31T15:15:00+03:00
 ---
 
 Выбор оптимального решения для организации чата с родными на self-hosted сервере в окружении Debian 13, rootless Podman (Quadlet), Caddy reverse proxy и Tailscale.

@@ -1,5 +1,5 @@
 baseURL = "https://research.evsyukov.org/"
-languageCode = "ru"
+locale = "ru"
 defaultContentLanguage = "ru"
 title = "Research"
 theme = "PaperMod"

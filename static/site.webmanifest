@@ -1,0 +1,23 @@
+{
+  "short_name": "Research",
+  "name": "Research — Denis Evsyukov",
+  "description": "Коллекция аналитических обзоров по инструментам и технологиям",
+  "icons": [
+    {
+      "src": "apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "72x72"
+    },
+    {
+      "src": "favicon.ico",
+      "type": "image/x-icon",
+      "sizes": "16x16 24x24 32x32 48x48"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafafa",
+  "theme_color": "#BC5007",
+  "orientation": "portrait-primary",
+  "lang": "ru"
+}

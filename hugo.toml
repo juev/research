@@ -1,33 +1,109 @@
 baseURL = "https://research.evsyukov.org/"
-locale = "ru"
-defaultContentLanguage = "ru"
+locale = "ru-RU"
 title = "Research"
-theme = "PaperMod"
-paginate = 20
+description = "Коллекция аналитических обзоров по инструментам и технологиям"
 
-[params]
-  description = "Коллекция аналитических обзоров по инструментам и технологиям"
-  defaultTheme = "auto"
-  showReadingTime = true
-  showShareButtons = false
-  showBreadCrumbs = true
-  showCodeCopyButtons = true
-  hideSummary = true
-  mainSections = ["articles"]
-  author = "Denis Evsyukov"
+copyright = "© Denis Evsyukov"
 
-  disableSpecial1stPost = true
-  DateFormat = "2 January 2006"
+summarylength = 10
 
-[markup.goldmark.extensions]
-  footnote = true
+rssLimit = 10
 
-[markup.goldmark.renderer]
-  unsafe = true
+enableGitInfo = true
 
-[markup.tableOfContents]
-  startLevel = 2
-  endLevel = 3
+[frontmatter]
+date = [":filename", ":default"]
+
+[taxonomies]
+tag = "tags"
 
 [outputs]
-  home = ["HTML", "RSS"]
+home = ["HTML", "RSS", "Atom"]
+term = ["HTML", "RSS"]
+
+[mediaTypes."application/atom+xml"]
+suffixes = ["xml"]
+
+[outputFormats.Atom]
+mediaType = "application/atom+xml"
+baseName = "atom"
+rel = "alternate"
+isPlainText = false
+
+[params]
+description = "Коллекция аналитических обзоров по инструментам и технологиям"
+mainSections = ["articles"]
+sourceUrl = "https://github.com/juev/research/blob/main/content/"
+gitUrl = "https://github.com/juev/research/commit/"
+
+[params.social]
+github = "juev"
+twitter = "juev"
+
+[params.author]
+name = "Denis Evsyukov"
+
+[params.authors]
+[params.authors.Denis]
+name = "Denis Evsyukov"
+email = "denis@evsyukov.org"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+    [markup.goldmark.extensions]
+      footnote = true
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 3
+  [markup.highlight]
+    codeFences = true
+    guessSyntax = true
+    lineNoStart = 1
+    lineNos = false
+    lineNumbersInTable = true
+    noClasses = false
+    style = "monokailight"
+    tabWidth = 4
+
+# Asset processing configuration
+[minify]
+  disableCSS = false
+  disableHTML = false
+  disableJS = false
+  disableJSON = false
+  disableSVG = false
+  disableXML = false
+  [minify.tdewolff]
+    [minify.tdewolff.css]
+      version = 2
+      precision = 0
+      keepQuotes = true
+    [minify.tdewolff.html]
+      keepComments = false
+      keepSpecialComments = true
+      keepDefaultAttrVals = true
+      keepDocumentTags = true
+      keepEndTags = true
+      keepQuotes = false
+      keepWhitespace = false
+    [minify.tdewolff.js]
+      keepVarNames = false
+      precision = 0
+
+# Image processing configuration
+[imaging]
+  resampleFilter = "CatmullRom"
+
+  [imaging.jpeg]
+    quality = 85
+
+  [imaging.webp]
+    quality = 85
+
+  [imaging.exif]
+    includeFields = ""
+    excludeFields = "GPS.*"
+    disableDate = false
+    disableLatLong = true

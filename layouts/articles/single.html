@@ -1,0 +1,24 @@
+{{ define "title" }}{{ .Title }} &ndash; {{ .Site.Title }}{{ end }}
+
+{{- define "main" -}}
+<h1 class="title">{{- .Title -}}</h1>
+{{- $n := .ReadingTime -}}
+{{- $minutes := "минут" -}}
+{{- if and (eq (mod $n 10) 1) (ne (mod $n 100) 11) }}{{ $minutes = "минута" }}
+{{- else if and (ge (mod $n 10) 2) (le (mod $n 10) 4) (or (lt (mod $n 100) 12) (gt (mod $n 100) 14)) }}{{ $minutes = "минуты" }}{{ end }}
+<div id="metainfo">
+    <p class="meta-line">
+        <span class="date">{{- if .GitInfo }}<a href="{{ .Site.Params.gitUrl -}}{{ .GitInfo.Hash }}" target="_blank" rel="noopener">{{ partial "date-ru.html" .Date }}</a>{{- else }}{{ partial "date-ru.html" .Date }}{{- end }}</span>
+        &middot; {{ $n }} {{ $minutes }} чтения
+    </p>
+    {{- with .Params.tags }}
+    <p class="tags">
+        {{- range $i, $tag := . }}{{ if $i }} &middot; {{ end }}<a href="{{ "tags" | absURL }}/{{ $tag | urlize }}">{{ $tag }}</a>{{ end -}}
+    </p>
+    {{- end }}
+</div>
+{{ partial "post-content.html" . }}
+<div class="meta">
+    {{ partial "nav.html" . }}
+</div>
+{{- end -}}

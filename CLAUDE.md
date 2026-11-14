@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Проект
 
-Коллекция аналитических обзоров (research articles) на Hugo + PaperMod theme. Публикуется на <https://research.evsyukov.org/> через GitHub Pages при push в `main`.
+Коллекция аналитических обзоров (research articles) на Hugo с локальной темой — те же шаблоны, SCSS и JS, что на <https://www.juev.org/>. Публикуется на <https://research.evsyukov.org/> через GitHub Pages при push в `main`.
 
 ## Команды
 
@@ -20,9 +20,10 @@ hugo --minify
 
 - **content/articles/** — markdown-статьи. Каждая статья — отдельный `.md` файл с YAML frontmatter (title, date с временем в ISO 8601)
 - **content/_index.md** — главная страница
-- **hugo.toml** — конфигурация: PaperMod theme, markdown-расширения (footnotes, unsafe HTML)
-- **themes/PaperMod/** — тема (git submodule)
-- **.github/workflows/deploy.yml** — CI: Hugo → deploy на GitHub Pages
+- **hugo.toml** — конфигурация: формат лент (RSS + Atom), markdown-расширения (footnotes, unsafe HTML), подсветка кода
+- **layouts/**, **assets/** — тема: локальные шаблоны, SCSS и JS (порт темы juev.org), сторонних тем и submodule нет
+- **layouts/index.atom.xml**, **layouts/index.rss.xml** — ленты `/atom.xml` (полный текст) и `/index.xml` (аннотации)
+- **.github/workflows/deploy.yml** — CI: Hugo → deploy на GitHub Pages (fetch-depth: 0 ради `.GitInfo`)
 
 ## Добавление новой статьи
 
@@ -37,7 +38,7 @@ date: 2026-03-25T14:30:00+03:00
 
 Формат даты — ISO 8601 с временем и timezone offset (`+03:00`). Время берётся **текущее** на момент создания статьи (проверять через `date +%H:%M`). Не выдумывать время — это приводит к датам в будущем. Это обеспечивает правильную сортировку статей, созданных в один день.
 
-1. Статья автоматически появится в списке на главной странице, отсортированная по дате (новые сверху)
+1. Статья автоматически появится в архиве `/articles/` по месяцам и в лентах `/atom.xml`, `/index.xml`; на главной показывается только последняя статья
 1. Язык контента — русский
 
 ## Deep Research

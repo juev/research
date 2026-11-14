@@ -1,0 +1,17 @@
+{{ define "title" }}{{ .Site.Title }}{{ end }}
+
+{{ define "main" }}
+{{ $articles := ($.Site.GetPage "section" "articles").Pages.ByPublishDate.Reverse }}
+{{ range first 1 $articles }}
+<h1 class="title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h1>
+<div id="metainfo"><p class="meta-line"><span class="date">{{ partial "date-ru.html" .Date }}</span></p></div>
+{{ partial "post-content.html" . }}
+{{ if .Store.Get "hasMermaid" }}{{ $.Store.Set "hasMermaid" true }}{{ end }}
+{{ end }}
+<div class="meta">
+    <div class="pagination">
+        <p class="allpostsmeta"><a href="{{ .Site.BaseURL }}articles/" title="Список всех статей">Список
+                всех статей</a></p>
+    </div>
+</div>
+{{ end }}

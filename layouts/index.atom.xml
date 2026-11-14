@@ -1,0 +1,46 @@
+{{- $articles := ($.Site.GetPage "section" "articles").Pages.ByPublishDate.Reverse -}}
+{{- $limit := site.Config.Services.RSS.Limit -}}
+{{- if ge $limit 1 }}{{ $articles = $articles | first $limit }}{{ end -}}
+{{ printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>{{ site.Title }}</title>
+  <subtitle>{{ site.Params.description }}</subtitle>
+  <id>{{ .Permalink }}</id>
+  {{- with .OutputFormats.Get "Atom" }}
+  <link href="{{ .Permalink }}" rel="self" type="{{ .MediaType.Type }}" />
+  {{- end }}
+  <link href="{{ .Permalink }}" rel="alternate" type="text/html" />
+  <updated>{{ with $articles }}{{ (index . 0).PublishDate.Format "2006-01-02T15:04:05Z07:00" }}{{ else }}{{ now.Format "2006-01-02T15:04:05Z07:00" }}{{ end }}</updated>
+  <generator uri="https://gohugo.io/">Hugo</generator>
+  <author>
+    <name>{{ site.Params.author.name }}</name>
+    {{- with site.Params.authors.Denis.email }}
+    <email>{{ . }}</email>
+    {{- end }}
+    <uri>https://denis.evsyukov.org</uri>
+  </author>
+  <rights>{{ site.Copyright }}</rights>
+  {{- range $articles }}
+  <entry>
+    <title>{{ .Title }}</title>
+    <id>{{ .Permalink }}</id>
+    <link href="{{ .Permalink }}" rel="alternate" type="text/html" />
+    <published>{{ .PublishDate.Format "2006-01-02T15:04:05Z07:00" }}</published>
+    <updated>{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}</updated>
+    <author>
+      <name>{{ site.Params.author.name }}</name>
+    </author>
+    {{- with .Params.tags }}
+    {{- range . }}
+    <category term="{{ . }}" />
+    {{- end }}
+    {{- end }}
+    {{- if .Description }}
+    <summary type="html">{{ .Description | transform.XMLEscape | safeHTML }}</summary>
+    {{- else }}
+    <summary type="html">{{ .Summary | transform.XMLEscape | safeHTML }}</summary>
+    {{- end }}
+    <content type="html">{{ .Content | transform.XMLEscape | safeHTML }}</content>
+  </entry>
+  {{- end }}
+</feed>

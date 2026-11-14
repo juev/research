@@ -1,0 +1,15 @@
+{{ define "title" }}Теги &ndash; {{ .Site.Title }}{{ end }}
+
+{{ define "main" }}
+
+<h1 class="title">Теги</h1>
+
+{{ range .Data.Terms.Alphabetical }}
+<p>
+  <a href="{{ .Page.Permalink }}">
+     {{ .Page.Title }}
+  </a>
+</p>
+{{ end }}
+
+{{ end }}

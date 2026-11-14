@@ -1,31 +1,164 @@
-{{- if lt hugo.Version "0.146.0" }}
-{{- errorf "=> hugo v0.146.0 or greater is required for hugo-PaperMod to build " }}
-{{- end -}}
-
 <!DOCTYPE html>
-{{- $theme := site.Params.defaultTheme | default "auto" }}
-{{- if eq $theme "dark" }}
-<html lang="{{ site.Language }}" dir="{{ .Language.Direction | default "auto" }}" data-theme="dark">
-{{- else if eq $theme "light" }}
-<html lang="{{ site.Language }}" dir="{{ .Language.Direction | default "auto" }}" data-theme="light">
-{{- else }}
-<html lang="{{ site.Language }}" dir="{{ .Language.Direction | default "auto" }}" data-theme="auto">
-{{- end }}
-
+<html lang="ru">
 <head>
-    {{- partial "head.html" . }}
+    <meta charset="utf-8">
+    <title>{{- block "title" . -}} {{- .Site.Title -}} {{- end -}}</title>
+    <meta name="description" content="{{ .Summary | default .Site.Params.Description }}">
+    {{ "<!-- http://t.co/dKP3o1e -->" | safeHTML }}
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {{ "<!-- end -->" | safeHTML }}
+    <link rel="canonical" href="{{- .Permalink -}}">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    {{- with site.Home.OutputFormats.Get "RSS" }}
+    <link rel="alternate" type="{{ .MediaType.Type }}" href="{{ .Permalink }}" title="{{ site.Title }}">
+    {{- end }}
+    {{- with site.Home.OutputFormats.Get "Atom" }}
+    <link rel="alternate" type="{{ .MediaType.Type }}" href="{{ .Permalink }}" title="{{ site.Title }} (Atom)">
+    {{- end }}
+    <link rel="manifest" href="/site.webmanifest">
+    {{ "<!-- Theme picked with the header toggle, applied before the first paint -->" | safeHTML }}
+    <script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
+    {{ $critical := resources.Get "scss/_critical.scss" | toCSS | minify -}}
+    <style>{{ $critical.Content | safeCSS }}</style>
+    {{ $style := resources.Get "scss/master.scss" | toCSS | minify | fingerprint -}}
+    <link rel="stylesheet" href="{{ $style.Permalink }}">
+    {{- with .PrevInSection }}
+    <link rel="prev" href="{{.Permalink}}">
+    {{- end }}
+    {{- with .NextInSection }}
+    <link rel="next" href="{{.Permalink}}">
+    {{- end }}
+    {{ "<!-- og:meta -->" | safeHTML }}
+    <meta property="og:title" content="{{- .Title -}}">
+    <meta property="og:url" content="{{- .Permalink -}}">
+    {{ if eq .Section "articles" -}}
+    <meta property="og:type" content="article">
+    <meta property="og:article:published_time" content={{ .Date.Format "2006-01-02T15:04:05Z0700" | safeHTML }}>
+    <meta property="og:description" content="{{- .Summary | default .Site.Params.Description -}}">
+    {{ with .Params.image }}<meta property="og:image" content="{{ . | absURL }}">{{ else }}{{ with .Site.Params.ogimage }}<meta property="og:image" content="{{ . | absURL }}">{{ end }}{{ end }}
+    {{ with .Params.author -}}
+    <meta property="og:article:author" content="{{humanize . }}">
+    <meta property="article:author" content="{{humanize . }}">
+    <meta name="author" content="{{humanize . }}">
+    {{ end -}}
+    {{ end -}}
+    {{ with .Params.tags -}}{{range . -}}
+    <meta property="article:tag" content="{{- . -}}">
+    {{end -}}
+    {{end -}}
+    <meta property="article:author" content="https://denis.evsyukov.org">
+    <meta name="fediverse:creator" content="@devsyukov@infosec.exchange">
+    {{ "<!-- end og:meta  -->" | safeHTML }}
+    {{ partial "schema.html" . }}
+    {{ "<!-- Image enhancement script -->" | safeHTML }}
+    {{ $images := resources.Get "js/images.js" | minify | fingerprint }}
+    <script src="{{ $images.Permalink }}" defer></script>
+    {{ "<!-- TOC active section tracking -->" | safeHTML }}
+    {{ $toc := resources.Get "js/toc.js" | minify | fingerprint }}
+    <script src="{{ $toc.Permalink }}" defer></script>
+    {{ "<!-- Footnotes as margin notes -->" | safeHTML }}
+    {{ $sidenotes := resources.Get "js/sidenotes.js" | minify | fingerprint }}
+    <script src="{{ $sidenotes.Permalink }}" defer></script>
+    {{ "<!-- Light/dark toggle in the header -->" | safeHTML }}
+    {{ $theme := resources.Get "js/theme.js" | minify | fingerprint }}
+    <script src="{{ $theme.Permalink }}" defer></script>
+    {{ "<!-- Safe page preloading script -->" | safeHTML }}
+    <script type="speculationrules">
+    {
+        "prerender": [{ "where": { "href_matches": "/*" }, "eagerness": "moderate" }],
+        "prefetch": [{ "where": { "href_matches": "/*" }, "eagerness": "moderate" }]
+    }
+    </script>
+    {{- if not hugo.IsProduction -}}
+    {{ "<!-- Development resource verification -->" | safeHTML }}
+    {{ partial "resource-check.html" . }}
+    {{- end -}}
 </head>
 
-{{- if (or (ne .Kind `page` ) (eq .Layout `archives`) (eq .Layout `search`)) }}
-<body class="list" id="top">
-{{- else }}
-<body id="top">
-{{- end }}
-    {{ partialCached "header.html" . .Page -}}
-    <main class="main">
-        {{- block "main" . }}{{ end }}
-    </main>
-    {{ partialCached "footer.html" . .Layout .Kind (.Param "hideFooter") (.Param "ShowCodeCopyButtons") -}}
+<body class="wide">
+    {{ "<!-- Offline status indicator -->" | safeHTML }}
+    <div id="connection-status" class="offline-indicator" style="display: none;">
+        <span>🔌 Нет подключения к интернету</span>
+    </div>
+    {{ "<!-- Skip navigation for screen readers -->" | safeHTML }}
+    <a href="#main-content" class="skip-nav">Перейти к основному содержанию</a>
+    <header class="navigation" aria-label="Основная навигация">
+        <div class="width-fix">
+            <nav aria-label="Основные разделы">
+                <ul>
+                    <li><a href="/">Главная</a></li>
+                    <li><a href="/articles/">Статьи</a></li>
+                    <li><a href="https://denis.evsyukov.org">Об авторе</a></li>
+                </ul>
+            </nav>
+            {{- /* Hidden until theme.js runs: without JavaScript the theme follows the system */}}
+            {{- /* theme.js shows the icon of the current mode via data-mode */}}
+            <button type="button" class="theme-toggle" aria-label="Переключить тему" hidden>
+                <svg class="theme-icon-system" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
+                <svg class="theme-icon-light" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></g></svg>
+                <svg class="theme-icon-dark" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+            </button>
+        </div>
+    </header>
+    <main class="primary-content width-fix" id="main-content">
+        <article class="entry">
+            {{- block "main" . -}}
+            {{- end -}}
+        </article>
+    </main>    
+    {{ "<!-- noindex -->" | safeHTML }}
+    <footer class="footer" aria-label="Подвал сайта">
+        <div class="width-fix footer-grid">
+            <div class="footer-main">
+                <p>&copy;&nbsp;<a rel="author" href="https://denis.evsyukov.org">Denis Evsyukov</a>,&nbsp;2026&ndash;{{ now.Format "2006" }}</p>
+                <nav aria-label="Дополнительная навигация">
+                    <ul class="footer-links">
+                        <li><a href="/articles/">Список статей</a></li>
+                        {{- with site.Home.OutputFormats.Get "Atom" }}
+                        <li><a href="{{ .RelPermalink }}">Atom</a></li>
+                        {{- end }}
+                        {{- with site.Home.OutputFormats.Get "RSS" }}
+                        <li><a href="{{ .RelPermalink }}">RSS</a></li>
+                        {{- end }}
+                    </ul>
+                </nav>
+                <p>Связаться: <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#100;&#101;&#110;&#105;&#115;&#64;&#101;&#118;&#115;&#121;&#117;&#107;&#111;&#118;&#46;&#111;&#114;&#103;" aria-label="Отправить письмо">email</a> &middot; <a rel="me" href="https://infosec.exchange/@devsyukov" aria-label="Mastodon профиль">Mastodon</a> &middot; <a href="https://github.com/Juev" aria-label="GitHub профиль">github</a></p>
+            </div>
+            {{- if ne .Kind "404" }}
+            <div class="footer-page">
+                <div class="footer-qr">
+                    {{- with images.QR .Permalink (dict "targetDir" "images/qr") }}
+                    <button type="button" class="footer-qr-open" popovertarget="footer-qr-full" aria-label="Увеличить QR-код">
+                        {{- /* Fixed size: the QR fills the column above the page links whatever the URL length */}}
+                        <img src="{{ .RelPermalink }}" width="110" height="110" alt="QR-код со ссылкой на эту страницу" loading="lazy">
+                    </button>
+                    <div id="footer-qr-full" class="footer-qr-full" popover>
+                        <button type="button" popovertarget="footer-qr-full" popovertargetaction="hide" aria-label="Закрыть">
+                            <img src="{{ .RelPermalink }}" width="{{ mul .Width 2 }}" height="{{ mul .Height 2 }}" alt="QR-код со ссылкой на эту страницу">
+                        </button>
+                    </div>
+                    {{- end }}
+                </div>
+                {{- with .File }}
+                <p>
+                    <span class="footer-page-label">Эта страница: </span>
+                    <a href="{{ $.Site.Params.sourceUrl }}{{ .Path }}">Исходник</a>
+                </p>
+                {{- end }}
+            </div>
+            {{- end }}
+        </div>
+    </footer>
+    {{- if .Store.Get "hasMermaid" -}}
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+        const picked = document.documentElement.dataset.theme;
+        const dark = picked ? picked === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        mermaid.initialize({ startOnLoad: true, theme: dark ? 'dark' : 'default' });
+    </script>
+    {{- end -}}
 </body>
-
 </html>

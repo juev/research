@@ -1,0 +1,1423 @@
+html,body.wide
+{
+  height:100%
+}
+
+html.wf-loading * {
+  opacity: 0;
+}
+
+body
+{
+  border-top:3px solid var(--brand);
+  font:var(--w-body) 18px/27px Alegreya, 'Alegreya Fallback', serif;
+  color:var(--text) !important;
+  background:var(--bg);
+}
+
+@media (min-width: 1000px) {
+  body
+  {
+   font-size:20px;
+   line-height:29px;
+  }
+}
+
+.right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+.left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+.center { margin-left: auto; margin-right: auto; text-align: center; }
+
+caption, col, colgroup, table, tbody, td, tfoot, th, thead, tr {
+  border-spacing: 0; }
+
+table {
+  border: 1px solid var(--rule);
+  border-collapse: collapse;
+  border-radius: 6px;
+  display: table;
+  empty-cells: hide;
+  margin: 1.2em auto;
+  padding: 0;
+  width: 80%; }
+
+caption {
+  display: table-caption;
+  font-weight: var(--w-strong); }
+
+col {
+  display: table-column; }
+
+colgroup {
+  display: table-column-group; }
+
+tbody {
+  display: table-row-group; }
+
+tfoot {
+  display: table-footer-group; }
+
+thead {
+  display: table-header-group; }
+
+td, th {
+  display: table-cell; }
+
+tr {
+  display: table-row; }
+
+table th, table td {
+  font-size: 1.1em;
+  line-height: 23px;
+  padding: 0 1em; }
+
+/* Alegreya defaults to oldstyle figures; columns of numbers read better lining */
+.post table {
+  font-size: 0.9em;
+  line-height: 1.5;
+  width: 100%;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* Keep wide tables scrollable without stretching the page on narrow screens. */
+@media (max-width: 999px) {
+  .post table {
+    display: block;
+    overflow-x: auto;
+    box-sizing: border-box;
+  }
+}
+
+.post table th,
+.post table td {
+  font-size: inherit;
+  padding: 0.6em 1em;
+  vertical-align: top;
+}
+
+table thead {
+  background: var(--surface);
+  border-bottom: 2px solid var(--rule); }
+
+table tbody {
+  background: var(--surface); }
+
+table tfoot {
+  background: var(--surface);
+  border-top: 2px solid var(--rule); }
+
+dt, th {
+  font-weight: var(--w-strong); }
+
+table tr:nth-child(odd), table th:nth-child(odd), table td:nth-child(odd) {
+  background: var(--stripe-odd); }
+
+table tr:nth-child(even), table td:nth-child(even) {
+  background: var(--stripe-even); }
+
+caption.t-above { caption-side: top; }
+caption.t-bottom { caption-side: bottom; }
+th { font-weight: var(--w-strong); }
+td, th { vertical-align:top;
+  padding-left: 20px;
+  padding-right: 20px;}
+th.right  { text-align: right; }
+th.left   { text-align: left; }
+th.center { text-align: center; }
+td.right  { text-align: right;  }
+td.left   { text-align: left;   }
+td.center { text-align: center; }
+
+body.wide
+{
+  margin:0;
+  padding:0
+}
+
+.footer
+{
+  padding:0 5px 25px;
+  color:var(--muted)
+}
+
+.footer .width-fix
+{
+  padding-top:15px;
+  border-top:1px solid var(--rule)
+}
+
+.footer-grid
+{
+  display:flex;
+  justify-content:space-between;
+  /* The page links share the baseline of the contacts line */
+  align-items:last baseline;
+  gap:30px
+}
+
+.footer-links
+{
+  list-style:none;
+  margin:10px 0;
+  padding:0
+}
+
+/* .footer p below sets the font with !important, hence the stronger selector */
+.footer .footer-page p
+{
+  text-align:center;
+  font-size:13px!important
+}
+
+.footer-page p a
+{
+  color:var(--faint)
+}
+
+/* Taxonomy pages have no page links: nothing to share a baseline with,
+   the QR lines up with the copyright instead */
+.footer-page:not(:has(p))
+{
+  align-self:flex-start
+}
+
+.footer-page img
+{
+  display:block;
+  margin:0
+}
+
+/* Twice the PNG size: square modules stay sharp */
+.footer-qr-full img
+{
+  image-rendering:pixelated
+}
+
+.footer-page button
+{
+  display:block;
+  margin:0 auto;
+  padding:0;
+  border:0;
+  background:none
+}
+
+/* Top aligned with the copyright line, which has the same 15px margin */
+.footer-page .footer-qr-open
+{
+  margin-top:15px;
+  cursor:zoom-in
+}
+
+/* Popover: the same PNG at twice its size, closed by a click on it, Esc or outside */
+/* margin:auto centers the popover: the reset zeroes margins on every div */
+.footer-qr-full
+{
+  margin:auto;
+  padding:0;
+  border:0;
+  background:#fff
+}
+
+.footer-qr-full button
+{
+  cursor:zoom-out
+}
+
+.footer-qr-full::backdrop
+{
+  background:rgba(0, 0, 0, 0.6)
+}
+
+/* Shown only on phones, where the QR is hidden and the links need context */
+.footer-page-label
+{
+  display:none
+}
+
+.wide .footer
+{
+  position:relative;
+  background-color:var(--bg);
+}
+
+.footer a
+{
+  color:var(--text);
+  text-decoration:none
+}
+
+.footer a:hover
+{
+  color:var(--brand);
+  text-decoration:none
+}
+
+/* Small caps, as in the headings */
+.footer p,
+.footer-links li
+{
+  margin:15px 0 5px;
+  text-transform:lowercase;
+  letter-spacing:1px;
+  font:500 15px/1.5 'Alegreya SC', 'Alegreya SC Fallback', serif!important
+}
+
+.footer-links li
+{
+  margin:4px 0
+}
+
+.wide .body
+{
+  margin:0 auto;
+  max-width:750px;
+  background:var(--bg)
+}
+
+.body
+{
+  text-align:left
+}
+
+.clear
+{
+  clear:both
+}
+
+strong
+{
+  font-weight: var(--w-strong);
+}
+
+.primary-content
+{
+    padding:20px;
+    background:var(--bg);
+    .allpostsmeta a
+    {
+        color:var(--rule)!important;
+        font-weight:var(--w-head);
+        font-size:28px!important;
+        font-family:'Alegreya SC', 'Alegreya SC Fallback', serif!important;
+        text-transform:lowercase
+    }
+    a,
+    a:visited
+          {
+              text-decoration:none;
+              color: var(--link);
+          }
+    a:hover
+          {
+              text-decoration:none;
+              background: var(--link-hover-bg);
+              border-radius: 4px;
+              transition: background .2s;
+          }
+}
+
+.post p
+{
+  margin-top: 0;
+  margin-bottom: 1.2rem;
+}
+
+.post p,
+.post li
+{
+  hyphens: auto;
+}
+
+.post p.updated
+{
+  color: var(--faint);
+  font-size: 0.9em;
+}
+
+/* Weblinks: запись — один абзац «жирная ссылка + описание».
+   Выносим ссылку-заголовок на отдельную строку, описание — строкой ниже.
+   Класс weblinks ставится на сам .post (в single- и index-шаблонах), чтобы
+   работать и на странице поста, и на главной. Scope не задевает обычные
+   статьи, где абзац может начинаться с жирного. */
+.post.weblinks p > strong:first-child:has(a)
+{
+  display: block;
+  margin-bottom: 0.4em;
+}
+
+/* Часть постов писалась с hard break (два пробела в конце строки ссылки → <br>).
+   После блочного заголовка этот <br> даёт лишнюю пустую строку — убираем,
+   чтобы hard-break и soft-break посты рендерились одинаково. */
+.post.weblinks p > strong:first-child:has(a) + br
+{
+  display: none;
+}
+
+.post h2
+{
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.post h3
+{
+  margin-top: 1.2em;
+  margin-bottom: 0.4em;
+}
+
+.post h2 a.post_hash,
+.post h3 a.post_hash,
+.post h4 a.post_hash
+{
+  color: inherit;
+}
+
+.post ol li
+{
+  list-style-type: decimal;
+  margin-left: 40px;
+  margin-right: 0;
+}
+
+.post ul li
+{
+  list-style-type: disc;
+  margin-left: 40px;
+  margin-right: 0;
+}
+
+/* Mermaid diagram container */
+.post .mermaid
+{
+  display: flex;
+  justify-content: center;
+  margin: 1.5em 0;
+  overflow-x: auto;
+}
+
+.post .mermaid svg
+{
+  max-width: 100%;
+  height: auto;
+}
+
+.navigation
+{
+  height:108px;
+  background-color:var(--bg);
+  color:var(--text);
+  vertical-align:middle;
+  font-size:15px;
+}
+
+/* Light header and footer: a hairline at the column width separates them
+   from the text */
+/* Flex instead of floats: the icon and the links share one centre line */
+.navigation .width-fix
+{
+  display:flex;
+  align-items:center;
+  height:100%;
+  box-sizing:border-box;
+  padding-top:30px;
+  border-bottom:1px solid var(--rule);
+}
+
+.navigation .width-fix ul
+{
+  display:flex;
+  align-items:center;
+  float:none;
+  margin:0;
+  padding:0;
+  list-style-type:none;
+}
+
+.navigation .width-fix li
+{
+  display:flex;
+  align-items:center;
+  float:none;
+  padding:0 1em 0 0;
+}
+
+.navigation .width-fix li a
+{
+  float:none;
+  display:block;
+  color:var(--text);
+  text-decoration:none;
+  text-transform:lowercase;
+  font-family:'Alegreya SC', 'Alegreya SC Fallback', serif!important;
+  font-size:20px;
+  font-weight:500;
+  letter-spacing:1px;
+  white-space:nowrap;
+}
+
+.navigation .width-fix li a:hover
+{
+  color:var(--brand);
+  text-decoration:none
+}
+
+/* Light/dark toggle, pushed to the right end of the header */
+.theme-toggle
+{
+  margin-left:auto;
+  padding:4px;
+  border:0;
+  background:none;
+  color:var(--muted);
+  line-height:0;
+  cursor:pointer
+}
+
+.theme-toggle:hover
+{
+  color:var(--brand)
+}
+
+/* One icon per mode; data-mode comes from theme.js */
+.theme-toggle svg
+{
+  display:none
+}
+
+.theme-toggle[data-mode="system"] .theme-icon-system,
+.theme-toggle[data-mode="light"] .theme-icon-light,
+.theme-toggle[data-mode="dark"] .theme-icon-dark
+{
+  display:block
+}
+
+/* The focus ring stays for the keyboard, not after a mouse click */
+.theme-toggle:focus:not(:focus-visible)
+{
+  outline:none
+}
+
+/* Add visual separator between navigation items */
+.navigation .width-fix li:not(:last-child):after
+{
+  content: "|";
+  color: var(--sep);
+  margin-left: 1em;
+}
+
+.width-fix
+{
+  margin-right:auto;
+  margin-left:auto;
+  max-width:685px
+}
+
+p.message
+{
+  background-color:#fee;
+  color:#900;
+  font-weight:var(--w-strong)
+}
+
+pre
+{
+  overflow:auto;
+  padding: .6em .9em;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--rule);
+  background-color:var(--bg);
+  margin-top: 0;
+  margin-bottom: 1.2rem;
+  line-height: 1.4;
+}
+
+/* The doubled family stops browsers from shrinking bare monospace to 13/16 */
+code
+{
+  font-family:monospace, monospace;
+  font-size:.85em;
+  color: var(--accent);
+}
+
+pre code
+{
+  font-size: 15px;
+  color:var(--text-2) !important;
+  line-height: 1.4;
+}
+
+pre code:before,
+pre code:after {
+  content: none;
+}
+
+code:before,
+code:after {
+  content: "`";
+  display: inline;
+}
+
+#feed
+{
+  float:right
+}
+
+blockquote
+{
+  position:relative;
+  margin:1.61em 0em;
+  padding-left:1em;
+  border-left:2px solid var(--faint);
+  font-style:italic
+}
+
+a#license
+{
+  border-bottom:1px dashed;
+  text-decoration:none
+}
+
+.meta
+{
+  margin-top:10px;
+  padding-bottom:15px;
+  border-top:1px dotted var(--rule)
+}
+
+// .footnotes
+// {
+// /*  border-color:#D3D3D3;
+//   border-top:1px dotted
+// */}
+
+.footnotes
+{
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--text-2);
+  margin-top: 2em;
+  padding-top: 1em;
+  border-top: 1px solid var(--rule);
+}
+
+.footnotes > hr
+{
+  display: none;
+}
+
+.footnotes ol
+{
+  padding-left: 1.5em;
+}
+
+.footnotes ol li
+{
+  margin-left: 0;
+  margin-bottom: 0.3em;
+}
+
+.footnotes p
+{
+  margin: 0.3em 0;
+  /* Research site: footnotes carry long URLs and often many backrefs in one
+     note; a single unbreakable run widened the column past the viewport. */
+  overflow-wrap: anywhere;
+}
+
+sup:has(.footnote-ref)
+{
+  vertical-align: baseline;
+  position: relative;
+  top: -0.4em;
+  font-size: 0.8em;
+  line-height: 0;
+}
+
+.primary-content .footnote-ref
+{
+  border: none !important;
+  text-decoration: none !important;
+  color: var(--accent);
+  padding: 0 1px;
+}
+
+.footnote-backref
+{
+  border: none !important;
+  font-size: 0.85em;
+}
+
+.pagination
+{
+  clear:both;
+  margin-top:20px
+}
+
+.pagination strong
+{
+  font-weight:400;
+  font-style:italic
+}
+
+/* One line each: a long title is cut with an ellipsis, the link's title
+   attribute keeps the full name */
+.pagination p
+{
+  display:block;
+  margin:0 0 .6em;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  color:var(--muted)!important;
+  font-size:17px;
+  line-height:1.5
+}
+
+.pagination-label
+{
+  margin-right:.3em;
+  font-family:'Alegreya SC', 'Alegreya SC Fallback', serif;
+  font-weight:500;
+  text-transform:lowercase;
+  letter-spacing:1px
+}
+
+.pagination a
+{
+  border-bottom:none;
+  text-decoration:none!important;
+  font-weight:var(--w-medium)
+}
+
+/* Small caps: lowercase text set in Alegreya SC */
+h1,h2,h3,h4,h5,h6
+{
+  font-family: 'Alegreya SC', 'Alegreya SC Fallback', serif;
+  font-weight:var(--w-head);
+  text-transform:lowercase;
+  margin-top:1em;
+  margin-bottom:1em;
+}
+
+h1.title
+{
+  color:var(--text)!important;
+  text-align:center;
+  font-weight:500;
+  letter-spacing:.06rem;
+  text-wrap:balance
+}
+
+h1.title a
+{
+  border-bottom:none;
+  color:var(--text)!important;
+  text-decoration:none
+}
+
+h1,h2
+{
+  margin:15px 0
+}
+
+h1
+{
+  font-size:34px;
+  line-height:1.1
+}
+
+h2
+{
+  font-size:23px;
+  line-height:1.2;
+  letter-spacing:-.02rem;
+  color:var(--text)!important;
+}
+
+h3
+{
+  font-size:20px;
+  line-height:1.2
+}
+
+h3.title
+{
+  margin-bottom:15px
+}
+
+.post_hash
+{
+  color:var(--text)!important;
+}
+
+/* The global img rule frames pictures with a shadow and lifts them on hover;
+   on a light background the QR shows it */
+.footer-page img {
+  box-shadow: none;
+  border-radius: 0;
+  transform: none;
+}
+
+.aligncenter
+{
+  float:none;
+  clear:both;
+  display:block;
+  margin-right:auto;
+  margin-left:auto
+}
+
+#metainfo
+{
+  display:block;
+  margin-bottom:2.2rem;
+  color:var(--muted);
+  text-align:center;
+  font-size:15px;
+  font-style:italic
+}
+
+#metainfo .date,
+#metainfo .tags a
+{
+  font-size:inherit;
+  font-weight:inherit
+}
+
+#metainfo .tags
+{
+  display:block;
+  margin-top:.2em;
+  font-family:'Alegreya SC', 'Alegreya SC Fallback', serif;
+  font-style:normal;
+  font-weight:500;
+  text-transform:lowercase;
+  letter-spacing:.02rem
+}
+
+#metainfo .tags a
+{
+  margin:0;
+  color:var(--muted)
+}
+
+.date
+{
+  display:inline-block;
+  font-weight:var(--w-strong);
+  font-size:8pt;
+}
+
+.date a
+{
+  color:var(--muted) !important;
+  border:none;
+  text-decoration:none;
+}
+
+.info
+{
+  display:inline-block;
+  // font-weight:bold;
+  font-size:9pt;
+}
+
+.tags
+{
+  display:inline-block;
+}
+
+.tags a
+{
+  border:none;
+  text-decoration:none;
+  margin-left: 5px;
+  font-size:9pt;
+}
+
+#tag-cloud a
+{
+  text-decoration: none;
+  color: var(--muted);
+  background-color: var(--surface);
+  padding: 4px 12px;
+  border-radius: 12px;
+  border: none !important;
+}
+
+#tag-cloud .set-1
+{
+  font-size:10pt;
+  line-height: 32px;
+}
+
+#tag-cloud .set-2
+{
+  font-size:14pt;
+  line-height: 38px;
+}
+
+#tag-cloud .set-3
+{
+  font-size:18pt;
+  line-height: 46px;
+}
+
+#tag-cloud .set-4
+{
+  font-size:22pt;
+  line-height: 52px;
+}
+
+#tag-cloud .set-5
+{
+  font-size:26pt;
+  line-height: 58px;
+}
+
+.share
+{
+  float:right;
+  margin:-2px 0 0
+}
+
+.archives
+{
+  float:left;
+  margin-bottom:15px;
+  width:70%
+}
+
+.tag_cloud
+{
+  float:left;
+  width:28%;
+  text-align:right
+}
+
+.tag_cloud a
+{
+  margin:0 2px;
+  border-bottom:0
+}
+
+#cloud a
+{
+  border-bottom:0;
+  padding:0 5px;
+}
+
+.list
+{
+  line-height:1.5em
+}
+
+.list a
+{
+  border-bottom:0
+}
+
+.post-list
+{
+  margin:0 0 1.5em;
+  padding:0;
+  list-style:none
+}
+
+.post-list li
+{
+  display:grid;
+  grid-template-columns:1.6em 1fr;
+  column-gap:.8em;
+  margin:0 0 .6em;
+  line-height:1.4
+}
+
+.post-list a
+{
+  border-bottom:0
+}
+
+.post-list time
+{
+  color:var(--faint);
+  text-align:right;
+  font-variant-numeric:lining-nums tabular-nums
+}
+
+/* weekly link digests step back so the posts stand out */
+.post-list .is-links a
+{
+  color:var(--faint);
+  font-size:.9em
+}
+
+ol li,ul li
+{
+  margin-bottom:10px;
+}
+
+/* Image optimization and responsive handling */
+img {
+  display: block;
+  margin: 1em auto;
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+img:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.post .shareding-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  max-width: 560px;
+  margin: 1.5em auto;
+}
+
+.post .shareding-gallery a {
+  display: block;
+  border-bottom: 0;
+  text-align: center;
+}
+
+.post .shareding-gallery img {
+  width: 100%;
+  height: auto;
+  margin: 0 0 0.35em;
+}
+
+.post .shareding-gallery span {
+  display: block;
+  font-size: 0.9em;
+  line-height: 1.3;
+}
+
+/* Figure and image containers */
+.image-figure {
+  margin: 2em auto;
+  text-align: center;
+  max-width: 100%;
+}
+
+.image-figure figcaption {
+  margin-top: 0.8em;
+  font-size: 0.9em;
+  color: var(--muted);
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* Picture element styling */
+picture {
+  display: block;
+  width: 100%;
+}
+
+picture img {
+  width: 100%;
+  height: auto;
+}
+
+/* Image zoom functionality */
+.image-figure img {
+  cursor: zoom-in;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Zoomed image: a popover over the whole viewport, closed by any click or Esc */
+.image-zoom {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: rgba(0, 0, 0, 0.8);
+  cursor: zoom-out;
+}
+
+.image-zoom:popover-open {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-zoom img,
+.image-zoom img:hover {
+  max-width: 90vw;
+  max-height: 90vh;
+  margin: 0;
+  padding: 12px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.5);
+  transform: none;
+}
+
+.related
+{
+  margin-top: 10px;
+  padding-bottom: 15px;
+  border-top: 1px dotted var(--rule);
+}
+
+.related a
+{
+  font-size:16px;
+  border: none;
+}
+
+/* Breakout: images and tables wider than text column */
+@media (min-width: 1000px) {
+  .post table {
+    width: calc(100% + 120px);
+    margin-left: -60px;
+    margin-right: -60px;
+  }
+
+  .post figure,
+  .post picture,
+  .post > p > img {
+    width: calc(100% + 120px);
+    max-width: calc(100% + 120px);
+    margin-left: -60px;
+    margin-right: -60px;
+    display: block;
+  }
+
+  .post figure img,
+  .post picture img {
+    width: 100%;
+    height: auto;
+  }
+}
+
+/* Article navigation: native disclosure on narrow screens, sidebar on wide ones. */
+.post-with-toc {
+  position: relative;
+}
+
+.post-toc-inline {
+  margin: 0 0 1.5em;
+  padding: 0.6em 0.8em;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+.post-toc-inline summary {
+  cursor: pointer;
+  color: var(--text-2);
+  font-weight: var(--w-medium);
+}
+
+.post-toc-inline nav {
+  margin-top: 0.6em;
+}
+
+.post-toc-inline ul,
+.post-toc ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.post-toc-inline ul ul,
+.post-toc ul ul {
+  padding-left: 1em;
+  margin-top: 0.2em;
+}
+
+.post-toc-inline a,
+.post-toc a {
+  color: var(--muted);
+  text-decoration: none;
+  display: block;
+  padding: 0.3em 0;
+  border: none;
+}
+
+.post-toc-inline a:hover,
+.post-toc a:hover,
+.post-toc a.active {
+  color: var(--brand);
+}
+
+.post-toc-inline summary:focus-visible,
+.post-toc-inline a:focus-visible,
+.post-toc a:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.post-toc {
+  display: none;
+}
+
+/* Margin notes, built by sidenotes.js; shown only next to a wide column */
+.sidenote {
+  display: none;
+}
+
+@media (min-width: 1280px) {
+  .post-toc-inline {
+    display: none;
+  }
+
+  /* The TOC takes the left margin, the right one is for the notes. The 80px
+     gap clears images and tables, which stick out of the column by 60px. */
+  .post-toc {
+    display: block;
+    position: absolute;
+    right: calc(100% + 80px);
+    top: 0;
+    bottom: 0;
+    width: 200px;
+    font-size: 0.75em;
+    line-height: 1.4;
+  }
+
+  .post-toc-inner {
+    position: sticky;
+    top: 20px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+  }
+
+  .post-toc-title {
+    margin: 0 0 0.6em;
+    color: var(--text-2);
+    font-weight: var(--w-medium);
+  }
+
+  .post-toc a {
+    padding: 0.2em 0 0.2em 0.5em;
+    border-left: 2px solid transparent;
+    transition: color 0.2s;
+  }
+
+  .post-toc a.active {
+    border-left-color: var(--brand);
+  }
+
+  /* Floated out of the text column, as in Tufte CSS: the negative margin
+     is wider than the note, so the text keeps its full width. The 70px gap
+     clears tables, which stick out of the column by 60px. */
+  .sidenote {
+    display: block;
+    float: right;
+    clear: right;
+    position: relative;
+    width: 220px;
+    margin: .3em -290px .8em 0;
+    font-size: 15px;
+    line-height: 1.45;
+    font-style: normal;
+    font-weight: var(--w-body);
+    color: var(--text-2);
+    text-align: left;
+    hyphens: auto;
+  }
+
+  .sidenote-number {
+    margin-right: .3em;
+    color: var(--accent);
+  }
+
+  .sidenote-para {
+    display: inline;
+  }
+
+  .sidenote-para + .sidenote-para {
+    display: block;
+    margin-top: .4em;
+  }
+
+  .post.has-sidenotes .footnotes {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .wide .body
+  {
+    margin:0;
+    width:100%;
+    background:var(--bg);
+    text-align:justify
+  }
+
+  #feed,.share,.tag_cloud,.desktop
+  {
+    display:none
+  }
+
+  /* Label on its own line, the title up to two lines */
+  .pagination p
+  {
+    white-space:normal
+  }
+
+  .pagination-label
+  {
+    display:block
+  }
+
+  .pagination a
+  {
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:2;
+    line-clamp:2;
+    overflow:hidden
+  }
+
+  a#o2
+  {
+    display:none
+  }
+
+  .archives,.pagination p,h1.title
+  {
+    width:100%
+  }
+
+  h1.title
+  {
+    font-size: 24px
+  }
+
+  .navigation .width-fix,
+  .footer .width-fix
+  {
+    padding: 0 20px
+  }
+
+  /* Three links and the theme toggle on one line at 360px */
+  .navigation .width-fix li
+  {
+    padding-right: .6em
+  }
+
+  .navigation .width-fix li a
+  {
+    font-size: 17px
+  }
+
+  .navigation .width-fix li:not(:last-child):after
+  {
+    margin-left: .6em
+  }
+
+  /* In a column, last baseline falls back to end alignment */
+  .footer-grid
+  {
+    flex-direction:column;
+    align-items:flex-start;
+    gap:0
+  }
+
+  .footer .footer-page p
+  {
+    margin-top:15px;
+    text-align:left
+  }
+
+  /* Nobody scans a phone screen with the same phone */
+  .footer-qr
+  {
+    display:none
+  }
+
+  .footer-page-label
+  {
+    display:inline
+  }
+}
+
+/* Accessibility improvements */
+/* Far enough above the edge that no part of it shows at any font size */
+.skip-nav {
+  position: absolute;
+  top: -100px;
+  left: 6px;
+  background: #000;
+  color: #fff;
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: bold;
+  z-index: 1000;
+  transition: top 0.3s;
+}
+
+.skip-nav:focus {
+  top: 6px;
+}
+
+/* Improved focus states */
+a:focus,
+button:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* High contrast focus for navigation */
+.navigation a:focus {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  background-color: rgba(188, 80, 7, 0.1);
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Offline indicator */
+.offline-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #e74c3c;
+  color: white;
+  text-align: center;
+  padding: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 1001;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+

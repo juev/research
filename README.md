@@ -6,20 +6,32 @@
 
 ## Локальная разработка
 
-Для предпросмотра сайта локально:
+Сайт собирается [Hugo](https://gohugo.io/) (extended, версия закреплена в
+`.github/workflows/deploy.yml`):
 
 ```bash
-pip install -r requirements.txt
-mkdocs serve
+hugo server          # предпросмотр на http://localhost:1313/
+hugo --minify        # сборка в public/
 ```
 
-Сайт будет доступен по адресу <http://127.0.0.1:8000/>
+## Структура
+
+- `content/articles/` — статьи, по одному `.md` на статью (YAML front matter:
+  `title`, `date` в ISO 8601 с часовым поясом)
+- `layouts/`, `assets/` — тема: локальные шаблоны, SCSS и JS, те же, что на
+  <https://www.juev.org/>; сторонних тем и git submodule нет
+- `hugo.toml` — конфигурация сайта, форматов вывода и подсветки кода
+- `static/` — шрифты, иконки, PDF-отчёты
+
+## Ленты
+
+- <https://research.evsyukov.org/atom.xml> — Atom, полный текст статей
+- <https://research.evsyukov.org/index.xml> — RSS 2.0, аннотации
+
+Обе ленты объявлены в `<head>` через `<link rel="alternate">`, число записей
+задаётся `rssLimit` в `hugo.toml`.
 
 ## Деплой
 
-Сайт автоматически собирается и публикуется на GitHub Pages при push в ветку `main` через GitHub Actions.
-
-## Технологии
-
-- [MkDocs](https://www.mkdocs.org/) — генератор статических сайтов
-- [Material for MkDocs](https://squidfundamentals.com/mkdocs-material/) — тема оформления
+Сайт собирается и публикуется на GitHub Pages при push в ветку `main` через
+GitHub Actions.

@@ -1,0 +1,181 @@
+/* Critical CSS - Above the fold styles for fast rendering */
+
+/* Colour tokens. The dark set applies when the system asks for it, unless
+   the reader picked light with the header toggle, or when they picked dark
+   (data-theme on <html>, set by the inline script in baseof.html). */
+@mixin dark-tokens {
+  color-scheme: dark;
+  --bg: #16161a;
+  --text: #d6d6d6;
+  --text-2: #c2c2c2;
+  --muted: #9a9a9a;
+  --faint: #7c7c7c;
+  --sep: #555;
+  --rule: #3a3a3a;
+  --surface: #1f1f24;
+  --stripe-odd: transparent;
+  --stripe-even: rgba(255, 255, 255, 0.04);
+  --link: #8cb4e8;
+  --link-hover-bg: #1c2533;
+  --accent: #e0928c;
+  --brand: #e0823f;
+  /* Light glyphs on a dark ground bloom and read bolder than they are,
+     so the dark weights run lighter. Alegreya SC ships only 500 and 700:
+     --w-head snaps to the nearest of those two. */
+  --w-body: 400;
+  --w-medium: 420;
+  --w-strong: 520;
+  --w-head: 500;
+}
+
+:root {
+  color-scheme: light;
+  --bg: #fff;
+  --text: #111;
+  --text-2: #333;
+  --muted: #555;
+  --faint: #999;
+  --sep: #bbb;
+  --rule: #ddd;
+  --surface: #f5f5f5;
+  --stripe-odd: rgba(255, 255, 255, 0.06);
+  --stripe-even: rgba(200, 200, 200, 0.25);
+  --link: #003366;
+  --link-hover-bg: #f0f7ff;
+  --accent: #660000;
+  --brand: #BC5007;
+  --w-body: 400;
+  --w-medium: 450;
+  --w-strong: 600;
+  --w-head: 500;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    @include dark-tokens;
+  }
+}
+
+:root[data-theme="dark"] {
+  @include dark-tokens;
+}
+
+html, body.wide {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  border-top: 3px solid var(--brand);
+  font: var(--w-body) 18px/27px Alegreya, 'Alegreya Fallback', serif;
+  color: var(--text) !important;
+  background: var(--bg);
+}
+
+/* Loading state */
+html.wf-loading * {
+  opacity: 0;
+}
+
+/* Critical navigation styles */
+.navigation {
+  height: 108px;
+  background-color: var(--bg);
+  color: var(--text);
+  vertical-align: middle;
+  font-size: 15px;
+}
+
+.width-fix {
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 685px;
+}
+
+.navigation .width-fix ul {
+  float: left;
+  margin: 50px 0 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.navigation .width-fix li {
+  float: left;
+  padding: 1em 1em 1em 0;
+}
+
+.navigation .width-fix li a {
+  float: left;
+  display: block;
+  color: var(--text);
+  text-decoration: none;
+  text-transform: lowercase;
+  font-family: 'Alegreya SC', 'Alegreya SC Fallback', serif !important;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+.navigation .width-fix li a:hover {
+  color: var(--brand);
+  text-decoration: none;
+}
+
+/* Add visual separator between navigation items */
+.navigation .width-fix li:not(:last-child):after {
+  content: "|";
+  color: var(--sep);
+  margin-left: 1em;
+  float: left;
+}
+
+
+/* Critical content styles */
+.primary-content {
+  padding: 20px;
+  background: var(--bg);
+}
+
+/* Skip navigation - critical for accessibility */
+.skip-nav {
+  position: absolute;
+  top: -100px;
+  left: 6px;
+  background: #000;
+  color: #fff;
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: bold;
+  z-index: 1000;
+  transition: top 0.3s;
+}
+
+.skip-nav:focus {
+  top: 6px;
+}
+
+/* Basic layout */
+.clear {
+  clear: both;
+}
+
+/* Essential responsive styles */
+@media screen and (max-width: 480px) {
+  .wide .body {
+    margin: 0;
+    width: 100%;
+    background: var(--bg);
+    text-align: justify;
+  }
+  
+  .navigation .width-fix {
+    padding: 0 20px;
+  }
+  
+  h1.title {
+    font-size: 24px;
+    width: 100%;
+  }
+} 

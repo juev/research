@@ -21,16 +21,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # fetch-depth: 0 keeps the history Hugo needs for .GitInfo (the date in
+      # an article links to the commit that last touched it).
       - uses: actions/checkout@v4
         with:
-          submodules: true
+          fetch-depth: 0
 
       - uses: peaceiris/actions-hugo@v3
         with:
-          hugo-version: "latest"
+          hugo-version: "0.167.0"
           extended: true
 
-      - run: hugo --minify
+      - run: hugo --gc --minify
 
       - uses: actions/upload-pages-artifact@v3
         with:
